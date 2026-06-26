@@ -84,7 +84,27 @@ Both languages expose the same four methods:
 | `add(...)` / `add_many([...])` | Index a document (or many). Chainable. |
 | `retrieve(query)` | Return the relevance-floored working set: `{ hits, terms, grounded }`. |
 | `prompt(query)` | Build the LLM message payload: `{ system, knowledge, user, grounded, sources }`. On a miss, `knowledge` is empty and `grounded` is `False` — short-circuit to an honest abstention without spending a token. |
-| `ask(query)` | Dependency-free demo answerer (no LLM call). Returns the top grounded doc's answer, or an honest abstention. Real apps pass `prompt(query)` to their own model. |
+| `messages(query)` | **Cache-optimal** assembly: a ready-to-send message array with the stable `[system + prefs]` prefix first and the volatile knowledge last. Returns `{ messages, grounded, sources, stable_prefix }`. |
+| `ask(query)` | Dependency-free demo answerer (no LLM call). Returns the top grounded doc's answer, or an honest abstention. Real apps pass `prompt(query)` or `messages(query)` to their own model. |
+
+### Cache-aware assembly (`messages`)
+
+If your endpoint does prompt caching (Anthropic `cache_control`, OpenAI/Azure automatic prefix caching), *order matters*. `messages()` builds the request so the cacheable part is maximized:
+
+```python
+kb = GroundedWork(prefs="The user is on the Pro plan. Prefer terse answers.")
+kb.add_many(docs)
+
+m = kb.messages("How do I get a refund?")
+# m["messages"] == [
+#   {"role": "system", "content": <grounding prompt + prefs>},  # STABLE — cached across calls
+#   {"role": "user",   "content": "Knowledge:\n### Returns...\n..."},  # volatile, LAST
+#   {"role": "user",   "content": "How do I get a refund?"},
+# ]
+# m["stable_prefix"] is byte-identical on every call → the endpoint's prefix cache hits it.
+```
+
+The volatile retrieved knowledge goes *last*, never in the system block — so everything before it is unchanged each call and the cache covers the whole prefix. (ContextForge puts retrieved content in the system message, which busts the cache on every query.) The library *structures* the request for cache hits; it can't *measure* your hit-rate — read that from the endpoint's response usage (e.g. `cache_read_input_tokens`) before/after.
 
 ### Using it with a real model
 

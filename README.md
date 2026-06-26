@@ -26,6 +26,7 @@ Built on the ideas of **[ContextForge](https://github.com/Betanu701/ContextForge
 - **Grounded by default** — a strict "answer only from the knowledge, don't guess" prompt. Measured 0/72 hallucinations vs 5/72 for a permissive prompt.
 - **Relevance floor by default** — when nothing matches well, inject *nothing*, not the least-bad distractors.
 - **Abstention is first-class** — `grounded == False` is a real return value, so you can skip the LLM call entirely on a miss.
+- **Cache-aware assembly** — `messages()` pins a stable `[system + prefs]` prefix dead-first and puts the volatile retrieved knowledge *last*, so a prompt-caching endpoint (Anthropic / OpenAI / Azure) reuses the whole prefix across calls. ContextForge does the opposite — it buries retrieved content in the system block, busting the cache every query.
 - **One obvious, flat API** — the intuitive path is the safe path.
 - **Cross-language parity** — Python and TypeScript run the same `fixtures/nimbus.json`, so they can't silently drift.
 

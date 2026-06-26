@@ -86,6 +86,8 @@ export interface Options {
   k1?: number;
   b?: number;
   systemPrompt?: string;
+  /** Stable per-user/persona text, pinned into the cached prefix. Default "". */
+  prefs?: string;
 }
 
 export class GroundedWork {
@@ -94,6 +96,7 @@ export class GroundedWork {
   readonly k1: number;
   readonly b: number;
   readonly systemPrompt: string;
+  readonly prefs: string;
 
   private docs: Doc[] = [];
   private tf: Map<string, number>[] = [];
@@ -107,6 +110,7 @@ export class GroundedWork {
     this.k1 = opts.k1 ?? 1.5;
     this.b = opts.b ?? 0.75;
     this.systemPrompt = opts.systemPrompt ?? GROUNDING_PROMPT;
+    this.prefs = opts.prefs ?? "";
   }
 
   /** Add one document. Title is weighted 2x (matches the reference). Chainable. */
@@ -176,6 +180,39 @@ export class GroundedWork {
       user: query,
       grounded: r.grounded,
       sources: r.hits.map((h) => h.doc.id),
+    };
+  }
+
+  /** The cache-stable prefix: [system + prefs], assembled identically every call.
+   *  Pin this at the front of every request and a prompt-caching endpoint reuses
+   *  it across calls. Contains nothing query-dependent, so it never changes. */
+  stablePrefix(): string {
+    return this.prefs ? `${this.systemPrompt}\n\n${this.prefs}` : this.systemPrompt;
+  }
+
+  /** Cache-optimal message assembly: stable prefix first (system), volatile
+   *  retrieved knowledge LAST before the user turn — so everything before the
+   *  knowledge is byte-identical every call and the prefix cache hits. The
+   *  library structures this; measure your hit-rate from the endpoint's usage
+   *  metadata (e.g. cache_read_input_tokens), not from here. */
+  messages(query: string): {
+    messages: { role: "system" | "user"; content: string }[];
+    grounded: boolean;
+    sources: string[];
+    stablePrefix: string;
+  } {
+    const r = this.retrieve(query);
+    const knowledge = r.hits.map((h) => `### ${h.doc.title}\n${h.doc.body}`).join("\n\n");
+    const messages: { role: "system" | "user"; content: string }[] = [
+      { role: "system", content: this.stablePrefix() },
+    ];
+    if (knowledge) messages.push({ role: "user", content: `Knowledge:\n${knowledge}` });
+    messages.push({ role: "user", content: query });
+    return {
+      messages,
+      grounded: r.grounded,
+      sources: r.hits.map((h) => h.doc.id),
+      stablePrefix: this.stablePrefix(),
     };
   }
 

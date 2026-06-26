@@ -89,3 +89,35 @@ test("tokenize drops stopwords", () => {
   assert.ok(!tokenize("the quick brown fox").includes("the"));
   assert.ok(tokenize("the quick brown fox").includes("quick"));
 });
+
+// -- cache-aware assembly ---------------------------------------------------
+test("stable prefix is query-independent (the cache target)", () => {
+  const gw = build();
+  const a = gw.messages("How do I get a refund?").stablePrefix;
+  const b = gw.messages("Do you have decaf?").stablePrefix;
+  assert.equal(a, b);
+  assert.equal(a, gw.stablePrefix());
+});
+
+test("prefs are pinned into the stable prefix, not the volatile knowledge", () => {
+  const gw = build({ prefs: "The user is on the Pro plan and prefers terse answers." });
+  assert.ok(gw.stablePrefix().includes("Pro plan"));
+  const m = gw.messages("How do I get a refund?");
+  assert.ok(m.messages[0].content.includes("Pro plan"));
+  assert.equal(m.messages[0].role, "system");
+});
+
+test("knowledge comes LAST before the user turn (cache-optimal order)", () => {
+  const m = build().messages("How do I get a refund?").messages;
+  assert.equal(m[0].role, "system");
+  assert.ok(m[1].content.includes("Knowledge:"));
+  assert.equal(m[m.length - 1].content, "How do I get a refund?");
+  assert.ok(!m[0].content.includes("Knowledge:")); // volatile content stays out of the cached prefix
+});
+
+test("ungrounded query injects no knowledge message", () => {
+  const m = build().messages("xyzzy quantum platypus").messages;
+  assert.equal(m.length, 2);
+  assert.equal(m[0].role, "system");
+  assert.equal(m[1].content, "xyzzy quantum platypus");
+});

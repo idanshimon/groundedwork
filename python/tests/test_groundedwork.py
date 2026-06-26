@@ -101,3 +101,42 @@ class TestApi:
     def test_prompt_shape(self, gw):
         p = gw.prompt("refund")
         assert set(p) == {"system", "knowledge", "user", "grounded", "sources"}
+
+
+class TestCacheAwareAssembly:
+    """The fix for the cache-hit advice given to ContextForge's author: pin a
+    stable [system + prefs] prefix and put the volatile retrieved knowledge LAST,
+    so a prompt-caching endpoint reuses the whole prefix across calls.
+    """
+
+    def test_stable_prefix_is_query_independent(self, gw):
+        # the cache target must be byte-identical regardless of the question
+        a = gw.messages("How do I get a refund?")["stable_prefix"]
+        b = gw.messages("Do you have decaf?")["stable_prefix"]
+        assert a == b
+        assert a == gw.stable_prefix()
+
+    def test_prefs_are_pinned_into_prefix(self):
+        gw = GroundedWork(prefs="The user is on the Pro plan and prefers terse answers.")
+        gw.add_many(FIXTURE["corpus"])
+        assert "Pro plan" in gw.stable_prefix()
+        # prefs live in the STABLE prefix, never in the volatile knowledge block
+        m = gw.messages("How do I get a refund?")
+        assert "Pro plan" in m["messages"][0]["content"]
+        assert m["messages"][0]["role"] == "system"
+
+    def test_knowledge_comes_last_before_user(self, gw):
+        m = gw.messages("How do I get a refund?")["messages"]
+        # order: system(prefix) -> knowledge -> user question
+        assert m[0]["role"] == "system"
+        assert "Knowledge:" in m[1]["content"]
+        assert m[-1]["content"] == "How do I get a refund?"
+        # the volatile knowledge must NOT be in the cached system prefix
+        assert "Knowledge:" not in m[0]["content"]
+
+    def test_ungrounded_query_has_no_knowledge_message(self, gw):
+        m = gw.messages("xyzzy quantum platypus")["messages"]
+        # just system prefix + the user turn; nothing injected
+        assert len(m) == 2
+        assert m[0]["role"] == "system"
+        assert m[1]["content"] == "xyzzy quantum platypus"

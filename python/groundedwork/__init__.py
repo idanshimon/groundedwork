@@ -100,12 +100,14 @@ class GroundedWork:
         k1: float = 1.5,
         b: float = 0.75,
         system_prompt: str = GROUNDING_PROMPT,
+        prefs: str = "",
     ) -> None:
         self.min_score = min_score
         self.top_k = top_k
         self.k1 = k1
         self.b = b
         self.system_prompt = system_prompt
+        self.prefs = prefs  # stable per-user/persona text, pinned into the cached prefix
         self._docs: list[Doc] = []
         self._tf: list[dict[str, int]] = []
         self._len: list[int] = []
@@ -187,6 +189,48 @@ class GroundedWork:
             "user": query,
             "grounded": r.grounded,
             "sources": [h.doc.id for h in r.hits],
+        }
+
+    def stable_prefix(self) -> str:
+        """The cache-stable prefix: [system + prefs], assembled identically on
+        every call. Pin THIS at the front of every request and a prompt-caching
+        endpoint (Anthropic cache_control, OpenAI/Azure automatic prefix cache)
+        will reuse it across calls. It contains nothing query-dependent, so it
+        never changes — which is exactly what a prefix cache needs.
+        """
+        parts = [self.system_prompt]
+        if self.prefs:
+            parts.append(self.prefs)
+        return "\n\n".join(parts)
+
+    def messages(self, query: str) -> dict:
+        """Cache-optimal message assembly.
+
+        Returns {"messages", "grounded", "sources", "stable_prefix"} where
+        `messages` is an OpenAI/Anthropic-style list ordered for maximum
+        prompt-cache hits:
+
+            1. system  = stable_prefix()         <- pinned, never changes, CACHED
+            2. user    = retrieved knowledge      <- volatile, LAST before the turn
+            3. user    = the actual question
+
+        Putting the volatile retrieved branch LAST (not in the system block, where
+        ContextForge puts it) means everything before it is byte-identical every
+        call, so the cache hit covers the entire stable prefix. The library can
+        structure this; it cannot measure your hit-rate — read that from the
+        endpoint's response usage (e.g. `cache_read_input_tokens`) before/after.
+        """
+        r = self.retrieve(query)
+        knowledge = "\n\n".join(f"### {h.doc.title}\n{h.doc.body}" for h in r.hits)
+        msgs = [{"role": "system", "content": self.stable_prefix()}]
+        if knowledge:
+            msgs.append({"role": "user", "content": f"Knowledge:\n{knowledge}"})
+        msgs.append({"role": "user", "content": query})
+        return {
+            "messages": msgs,
+            "grounded": r.grounded,
+            "sources": [h.doc.id for h in r.hits],
+            "stable_prefix": self.stable_prefix(),
         }
 
     def ask(self, query: str) -> dict:
