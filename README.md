@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <a href="https://idanshimon.github.io/groundedwork-demo/"><img src="https://img.shields.io/badge/▶_live_demo-try_it_in_your_browser-a371f7" alt="live demo"></a>
   <a href="https://github.com/idanshimon/groundedwork/actions/workflows/tests.yml"><img src="https://github.com/idanshimon/groundedwork/actions/workflows/tests.yml/badge.svg" alt="tests"></a>
   <img src="https://img.shields.io/badge/python-3.9%20%7C%203.11%20%7C%203.13-blue" alt="python">
   <img src="https://img.shields.io/badge/node-18%20%7C%2020%20%7C%2022-green" alt="node">
@@ -38,14 +39,18 @@ kb.ask("capital of France?")          # {'grounded': False, 'answer': "I don't h
 
 ## Try it live (in your browser)
 
-A zero-dependency playground runs the **real engine** locally — no mockups, no hardcoded numbers. You type a question and watch the actual pipeline: tokenized terms → real BM25 scores vs the relevance floor → the grounded/abstain decision → the exact cache-aware prompt your model would receive.
+**▶ [Open the live demo](https://idanshimon.github.io/groundedwork-demo/)** — no install, runs in your browser.
+
+It runs the **real** groundedwork TypeScript engine client-side — the same implementation the test suite verifies byte-identical to the Python reference (to 9 decimal places). No backend, no mockups, no hardcoded numbers: every BM25 score, the relevance-floor decision, the grounded/abstain verdict, and the assembled prompt are computed live. Type a question about a fictional coffee company's help docs and expand **“show what happened”** to watch the actual pipeline: tokenized terms → BM25 scores vs the floor → the decision → the cache-aware prompt your model would receive.
+
+Prefer to run it yourself? The same playground runs locally against the Python package:
 
 ```bash
 make play          # then open http://localhost:8000
 # or:  python playground/server.py
 ```
 
-It imports the installed `groundedwork` package and calls the same `retrieve` / `prompt` / `messages` / `ask` methods the tests use. Five guided scenarios walk you through a grounded answer, an honest abstention, the keyword paraphrase gap, and the cache-aware prompt assembly. Expand **“show what happened”** on any answer to see every stage.
+The local version imports the installed `groundedwork` package and calls the same `retrieve` / `prompt` / `messages` / `ask` methods the tests use. Five guided scenarios cover a grounded answer, an honest abstention, the keyword paraphrase gap, and the cache-aware prompt assembly.
 
 
 ## What makes it different
