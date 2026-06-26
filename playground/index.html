@@ -600,13 +600,21 @@ function renderScoreBars(scored, floor) {
   if (!scored || !scored.length) {
     return `<div class="chart-box"><div class="chart-note" style="margin:0">No documents matched the query terms, or none met the minimum BM25 threshold (${floor}). The engine abstains.</div></div>`;
   }
-  
-  // Calculate max score for the chart width scale (add 10% padding)
-  const max = Math.max(...scored.map(s => s.score), floor) * 1.1;
-  const floorPct = (floor / max) * 100;
-  
+
+  // BM25 scores span a wide range (e.g. floor 0.5 vs a top hit of 8+). On a
+  // linear scale the floor line gets crushed against the left edge and looks
+  // "off the chart". A log scale keeps the bars proportional by ratio AND keeps
+  // the floor line at a legible position — standard for relevance scores.
+  const top = Math.max(...scored.map(s => s.score));
+  // log domain: a hair below the floor, up to 10% above the top score.
+  const lo = Math.log(Math.max(floor * 0.6, 0.05));
+  const hi = Math.log(top * 1.1);
+  const span = (hi - lo) || 1;
+  const posOf = v => Math.max(0, Math.min(100, ((Math.log(Math.max(v, 0.05)) - lo) / span) * 100));
+  const floorPct = posOf(floor);
+
   const barsHtml = scored.slice(0, 8).map(s => {
-    const pct = Math.max(1, (s.score / max) * 100);
+    const pct = Math.max(2, posOf(s.score));
     const passed = s.score >= floor;
     return `
       <div class="score-row">
@@ -629,7 +637,7 @@ function renderScoreBars(scored, floor) {
       </div>
       <div class="chart-note">
         <div class="chart-note-box"></div>
-        <span>Relevance floor threshold. Bars to the left are dropped from the context.</span>
+        <span>Relevance floor (log scale). Bars that don't reach it are dropped from the context.</span>
       </div>
     </div>
   `;
