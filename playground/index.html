@@ -5,207 +5,800 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>groundedwork — live playground</title>
 <style>
-  :root{
-    --bg:#0d1117; --panel:#161b22; --panel2:#1c222b; --line:#30363d;
-    --ink:#e6edf3; --dim:#8b949e; --violet:#a371f7; --green:#3fb950;
-    --red:#f85149; --amber:#d29922; --blue:#58a6ff; --cyan:#39c5cf;
+  :root {
+    --bg: #09090b;
+    --panel: #18181b;
+    --panel-elevated: #27272a;
+    --border: #3f3f46;
+    --border-light: #52525b;
+    --text: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --text-dim: #71717a;
+    --brand-gradient: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    --green: #10b981;
+    --green-dim: rgba(16, 185, 129, 0.15);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245, 158, 11, 0.15);
+    --red: #ef4444;
+    --cyan: #06b6d4;
+    --blue: #3b82f6;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);
-    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-  code,pre,.mono{font-family:"SF Mono",ui-monospace,"Cascadia Code",Menlo,monospace}
-  .wrap{max-width:1100px;margin:0 auto;padding:24px 20px 80px}
-  header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-  h1{font-size:26px;margin:0;background:linear-gradient(90deg,#a371f7,#58a6ff);
-    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
-  .tag{color:var(--dim);font-size:13px}
-  .live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--green);
-    border:1px solid rgba(63,185,80,.4);border-radius:20px;padding:2px 10px}
-  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-  .sub{color:var(--dim);font-size:14px;margin:8px 0 20px;max-width:760px}
-  .sub b{color:var(--ink)}
 
-  .scenarios{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-  .chip{background:var(--panel);border:1px solid var(--line);color:var(--ink);
-    border-radius:10px;padding:8px 12px;cursor:pointer;font-size:13px;transition:.15s;text-align:left}
-  .chip:hover{border-color:var(--violet);transform:translateY(-1px)}
-  .chip small{display:block;color:var(--dim);font-size:11px;margin-top:2px;max-width:230px}
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
 
-  .chatbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-  .bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel2)}
-  .bar .d{width:11px;height:11px;border-radius:50%}
-  .bar .r{background:#ff5f56}.bar .y{background:#ffbd2e}.bar .g{background:#27c93f}
-  .bar .t{margin-left:8px;color:var(--dim);font-size:12px}
-  .log{padding:18px;min-height:160px;max-height:none}
-  .empty{color:var(--dim);text-align:center;padding:40px 10px;font-size:14px}
+  /* Layout */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 20px 100px;
+  }
 
-  .msg{margin-bottom:14px}
-  .me{text-align:right}
-  .me .bub{display:inline-block;background:#1f6feb;color:#fff;border-radius:14px 14px 4px 14px;padding:9px 14px;max-width:80%;text-align:left}
-  .bot .bub{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:12px 16px;max-width:92%}
-  .verdict{display:inline-flex;align-items:center;gap:8px;font-weight:600;margin-bottom:6px}
-  .v-ok{color:var(--green)} .v-no{color:var(--amber)}
-  .ans{color:var(--ink)}
-  .src{margin-top:8px;font-size:12px;color:var(--dim)}
-  .src b{color:var(--cyan)}
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.03em;
+  }
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 999px;
+    padding: 4px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+  }
 
-  details{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
-  summary{cursor:pointer;color:var(--violet);font-size:13px;user-select:none}
-  summary:hover{text-decoration:underline}
-  .stage{margin:10px 0}
-  .stage h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);font-weight:600}
-  .pill{display:inline-block;background:#21262d;border:1px solid var(--line);border-radius:6px;
-    padding:2px 8px;margin:2px 4px 2px 0;font-size:12px}
-  .pill.term{color:var(--cyan)}
-  .scorerow{display:flex;align-items:center;gap:10px;margin:3px 0;font-size:13px}
-  .scorerow .id{flex:0 0 150px;color:var(--ink)}
-  .scorerow .barwrap{flex:1;background:#21262d;border-radius:4px;height:16px;position:relative;overflow:hidden}
-  .scorerow .fill{height:100%;background:linear-gradient(90deg,#3fb950,#58a6ff)}
-  .scorerow .fill.under{background:#484f58}
-  .scorerow .num{flex:0 0 56px;text-align:right;color:var(--dim);font-variant-numeric:tabular-nums}
-  .floorline{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--amber);z-index:2}
-  .floornote{font-size:11px;color:var(--amber);margin-top:4px}
-  pre{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;
-    font-size:12.5px;line-height:1.5;margin:6px 0 0;white-space:pre-wrap}
-  .role{color:var(--violet);font-weight:600}
-  .cache{font-size:11px;color:var(--green);margin-top:4px}
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 760px;
+    margin: 0 0 32px;
+  }
+  .subtitle b { color: var(--text); }
 
-  .inputbar{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line);background:var(--panel2)}
-  .inputbar input{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;
-    color:var(--ink);padding:11px 14px;font-size:15px;outline:none}
-  .inputbar input:focus{border-color:var(--violet)}
-  .inputbar button{background:#238636;border:none;color:#fff;border-radius:10px;padding:0 20px;
-    font-size:15px;font-weight:600;cursor:pointer}
-  .inputbar button:hover{background:#2ea043}
-  .foot{color:var(--dim);font-size:12px;margin-top:14px;text-align:center}
-  .foot b{color:var(--ink)}
+  /* Scenarios */
+  .scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .scenario-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+    outline: none;
+    font-family: inherit;
+    color: inherit;
+  }
+  .scenario-card:hover, .scenario-card:focus-visible {
+    border-color: #a78bfa;
+    background: var(--panel-elevated);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  }
+  .scenario-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .scenario-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* Chatbox */
+  .chat-window {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+  .chat-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+  .mac-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .mac-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .mac-dot.r { background: #ff5f56; }
+  .mac-dot.y { background: #ffbd2e; }
+  .mac-dot.g { background: #27c93f; }
+  .chat-title {
+    margin-left: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .chat-log {
+    padding: 24px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+  }
+  .empty-state {
+    margin: auto;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 15px;
+  }
+
+  /* Messages */
+  .msg {
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.me {
+    align-items: flex-end;
+  }
+  .msg.me .bub {
+    background: var(--text);
+    color: var(--bg);
+    padding: 12px 20px;
+    border-radius: 20px 20px 4px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    max-width: 85%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .msg.bot {
+    align-items: flex-start;
+  }
+
+  /* Bot Message Card */
+  .bot-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 20px 4px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .bot-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .verdict-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .verdict-badge.v-ok {
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  .verdict-badge.v-no {
+    color: var(--amber);
+    background: var(--amber-dim);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+  .bot-answer {
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .bot-meta {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .bot-meta b { color: var(--cyan); font-weight: 600; }
+
+  /* Pipeline Reveal */
+  details {
+    background: rgba(255,255,255,0.01);
+  }
+  summary {
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #a78bfa;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+  summary:hover { background: rgba(255,255,255,0.03); }
+  summary::before {
+    content: "▶";
+    font-size: 10px;
+    transition: transform 0.2s;
+  }
+  details[open] summary::before { transform: rotate(90deg); }
+  details[open] summary { border-bottom: 1px dashed var(--border); }
+
+  .pipeline {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: relative;
+  }
+  .pipeline::before {
+    content: "";
+    position: absolute;
+    top: 24px; bottom: 24px; left: 35px;
+    width: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .stage {
+    position: relative;
+    z-index: 1;
+  }
+  .stage-num {
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--panel-elevated);
+    border: 2px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .stage-content {
+    margin-left: 44px;
+  }
+  .stage-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin: 0 0 12px;
+  }
+
+  /* Pills */
+  .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--cyan);
+  }
+  .pill.dim { color: var(--text-dim); border-color: var(--border); }
+
+  /* Hero Chart (Scores vs Floor) */
+  .chart-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+  }
+  .chart-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 10px;
+  }
+  .floor-line {
+    position: absolute;
+    top: -4px;
+    bottom: -8px;
+    width: 2px;
+    background: var(--amber);
+    z-index: 10;
+    box-shadow: 0 0 10px var(--amber);
+    transition: left 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .floor-label {
+    position: absolute;
+    top: -20px;
+    transform: translateX(-50%);
+    background: var(--amber-dim);
+    color: var(--amber);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    z-index: 11;
+  }
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .score-id {
+    flex: 0 0 120px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .score-track {
+    flex: 1;
+    height: 18px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  @keyframes growBar {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 4px;
+    animation: growBar 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .score-fill.pass {
+    background: linear-gradient(90deg, #10b981, #3b82f6);
+  }
+  .score-fill.fail {
+    background: var(--border-light);
+  }
+  .score-val {
+    flex: 0 0 50px;
+    text-align: right;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+  .chart-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chart-note-box {
+    width: 12px; height: 12px; border-radius: 2px;
+    background: var(--amber);
+  }
+
+  /* Terminal Prompt */
+  .term-window {
+    background: #000;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .term-header {
+    background: #111;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .term-body {
+    padding: 16px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .term-role { font-weight: 700; margin-right: 6px; }
+  .term-role.system { color: #a78bfa; }
+  .term-role.user { color: #10b981; }
+  .term-cache {
+    padding: 12px 16px;
+    background: rgba(16, 185, 129, 0.05);
+    border-top: 1px solid rgba(16, 185, 129, 0.2);
+    font-size: 12px;
+    color: var(--green);
+    display: flex;
+    gap: 8px;
+  }
+
+  /* Input Bar */
+  .input-area {
+    padding: 20px;
+    background: var(--panel-elevated);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+  }
+  .input-box {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-box:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+  .input-box::placeholder { color: var(--text-dim); }
+  .send-btn {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .send-btn:hover { opacity: 0.9; }
+  .send-btn:active { transform: scale(0.97); }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .footer b { color: var(--text-muted); }
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<div class="container">
   <header>
     <h1>groundedwork</h1>
-    <span class="live"><span class="dot"></span>REAL engine · <span id="meta">loading…</span></span>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      REAL engine <span style="opacity:0.3;margin:0 2px">|</span> <span id="meta">loading...</span>
+    </div>
   </header>
-  <div class="tag">an interactive walkthrough — every answer below is the actual library running, not a mockup</div>
-  <p class="sub">Type a question about a fictional coffee company's help docs. groundedwork retrieves the
+  <p class="subtitle">
+    Type a question about a fictional coffee company's help docs. groundedwork retrieves the
     relevant docs with <b>real BM25</b>, applies the <b>relevance floor</b>, decides whether to
     <b>ground or abstain</b>, and assembles the <b>cache-aware prompt</b> your model would receive.
-    Expand <b>“show what happened”</b> on any answer to see every stage.</p>
+  </p>
 
-  <div class="scenarios" id="scenarios"></div>
+  <div class="scenarios-grid" id="scenarios"></div>
 
-  <div class="chatbox">
-    <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span>
-      <span class="t">groundedwork — live</span></div>
-    <div class="log" id="log"><div class="empty">Pick a scenario above, or ask your own question below 👇</div></div>
-    <div class="inputbar">
-      <input id="q" placeholder="Ask about refunds, shipping, subscriptions, decaf…" autocomplete="off">
-      <button id="send">Ask</button>
+  <div class="chat-window">
+    <div class="chat-header">
+      <div class="mac-dots">
+        <div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div>
+      </div>
+      <div class="chat-title">playground_live</div>
+    </div>
+    
+    <div class="chat-log" id="log">
+      <div class="empty-state">Pick a scenario above, or ask your own question below 👇</div>
+    </div>
+    
+    <div class="input-area">
+      <input type="text" id="q" class="input-box" placeholder="Ask about refunds, shipping, subscriptions, decaf..." autocomplete="off">
+      <button id="send" class="send-btn">Ask</button>
     </div>
   </div>
-  <div class="foot">groundedwork is <b>BYOM</b> — it never calls an LLM. The “answer” is the source
-    document text; everything before it (retrieval, scoring, floor, grounding, the prompt) is the real engine.</div>
+  
+  <div class="footer">
+    groundedwork is <b>BYOM</b> — it never calls an LLM. The "answer" shown is the source document text; 
+    everything before it (retrieval, scoring, floor, grounding, the prompt) is the real engine.
+  </div>
 </div>
 
 <script>
 const log = document.getElementById('log');
 const qIn = document.getElementById('q');
+const sendBtn = document.getElementById('send');
 
-fetch('/api/version').then(r=>r.json()).then(v=>{
+// Fetch initial metadata
+fetch('/api/version').then(r => r.json()).then(v => {
   document.getElementById('meta').textContent = `v${v.version} · ${v.corpus_size} docs`;
+}).catch(() => {
+  document.getElementById('meta').textContent = `disconnected`;
 });
-fetch('/api/scenarios').then(r=>r.json()).then(d=>{
+
+// Fetch scenarios
+fetch('/api/scenarios').then(r => r.json()).then(d => {
   const box = document.getElementById('scenarios');
-  d.scenarios.forEach(s=>{
-    const b = document.createElement('button');
-    b.className='chip';
-    b.innerHTML = `${s.label}<small>${s.teaches}</small>`;
-    b.onclick = ()=>ask(s.query);
-    box.appendChild(b);
+  d.scenarios.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'scenario-card';
+    btn.innerHTML = `<div class="scenario-title">${esc(s.label)}</div><div class="scenario-desc">${esc(s.teaches)}</div>`;
+    btn.onclick = () => ask(s.query);
+    box.appendChild(btn);
   });
-});
+}).catch(e => console.error(e));
 
-function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-
-function userMsg(q){
-  const d=document.createElement('div'); d.className='msg me';
-  d.innerHTML=`<span class="bub">${esc(q)}</span>`; log.appendChild(d);
+function esc(s){ 
+  return (s||'').toString().replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); 
 }
 
-function scoreBars(scored, floor){
-  if(!scored.length) return `<div class="floornote">No document scored above the floor (${floor}). Nothing to inject — the engine abstains.</div>`;
-  const max = Math.max(...scored.map(s=>s.score), floor)*1.1;
-  return scored.slice(0,8).map(s=>{
-    const pct=Math.max(2,(s.score/max)*100);
-    const fl=(floor/max)*100;
-    const under = s.score < floor;
-    return `<div class="scorerow">
-      <span class="id mono">${esc(s.id)}</span>
-      <span class="barwrap"><span class="fill ${under?'under':''}" style="width:${pct}%"></span>
-        <span class="floorline" style="left:${fl}%" title="floor ${floor}"></span></span>
-      <span class="num mono">${s.score.toFixed(3)}</span></div>`;
-  }).join('') + `<div class="floornote">▌ amber line = relevance floor (${floor}). Bars left of it are dropped.</div>`;
-}
-
-function promptBlock(messages){
-  return messages.map(m=>`<span class="role">${m.role}:</span>\n${esc(m.content)}`).join('\n\n');
-}
-
-function botMsg(data){
-  const g = data.grounded;
-  const verdict = g
-    ? `<span class="verdict v-ok">✅ grounded — answered from a document</span>`
-    : `<span class="verdict v-no">🚫 abstained — not in the knowledge base</span>`;
-  const src = g && data.answer.source
-    ? `<div class="src">source document: <b>${esc(data.answer.source)}</b> · ${data.terms.length} query term(s): ${data.terms.map(t=>esc(t)).join(', ')}</div>`
-    : `<div class="src">${data.terms.length} query term(s): ${data.terms.map(t=>esc(t)).join(', ')||'—'}</div>`;
-
-  const d=document.createElement('div'); d.className='msg bot';
-  d.innerHTML=`<div class="bub">
-    ${verdict}
-    <div class="ans">${esc(data.answer.answer)}</div>
-    ${src}
-    <details>
-      <summary>show what happened (the real pipeline)</summary>
-      <div class="stage"><h4>1 · tokenized query terms</h4>
-        ${data.terms.length? data.terms.map(t=>`<span class="pill term mono">${esc(t)}</span>`).join('') : '<span class="pill">none after stopword removal</span>'}</div>
-      <div class="stage"><h4>2 · BM25 scores vs the relevance floor</h4>${scoreBars(data.scored, data.floor)}</div>
-      <div class="stage"><h4>3 · decision</h4>
-        <span class="pill">grounded = <b style="color:${g?'#3fb950':'#d29922'}">${g}</b></span>
-        <span class="pill">${g? data.hits.length+' doc(s) injected' : '0 docs injected — no guessing'}</span></div>
-      <div class="stage"><h4>4 · the prompt your model would receive (cache-aware order)</h4>
-        <pre>${promptBlock(data.messages)}</pre>
-        <div class="cache">↑ the [system + prefs] prefix is byte-identical across queries, so a caching endpoint reuses it. Volatile knowledge sits last.</div></div>
-    </details>
-  </div>`;
-  log.appendChild(d);
-  d.scrollIntoView({behavior:'smooth', block:'end'});
-}
-
-let busy=false;
-async function ask(q){
-  if(busy||!q.trim()) return;
-  busy=true;
-  if(log.querySelector('.empty')) log.innerHTML='';
-  userMsg(q);
-  try{
-    const r = await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({query:q})});
-    const data = await r.json();
-    if(data.error){ throw new Error(data.error); }
-    botMsg(data);
-  }catch(e){
-    const d=document.createElement('div'); d.className='msg bot';
-    d.innerHTML=`<div class="bub"><span class="verdict v-no">error</span><div class="ans">${esc(e.message)}</div></div>`;
-    log.appendChild(d);
+function renderScoreBars(scored, floor) {
+  if (!scored || !scored.length) {
+    return `<div class="chart-box"><div class="chart-note" style="margin:0">No documents matched the query terms, or none met the minimum BM25 threshold (${floor}). The engine abstains.</div></div>`;
   }
-  busy=false; qIn.value='';
+  
+  // Calculate max score for the chart width scale (add 10% padding)
+  const max = Math.max(...scored.map(s => s.score), floor) * 1.1;
+  const floorPct = (floor / max) * 100;
+  
+  const barsHtml = scored.slice(0, 8).map(s => {
+    const pct = Math.max(1, (s.score / max) * 100);
+    const passed = s.score >= floor;
+    return `
+      <div class="score-row">
+        <div class="score-id" title="${esc(s.id)}">${esc(s.id)}</div>
+        <div class="score-track">
+          <div class="score-fill ${passed ? 'pass' : 'fail'}" style="width: ${pct}%"></div>
+        </div>
+        <div class="score-val">${s.score.toFixed(3)}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="chart-box">
+      <div class="chart-area">
+        <div class="floor-line" style="left: ${floorPct}%">
+          <div class="floor-label">Floor ${floor}</div>
+        </div>
+        ${barsHtml}
+      </div>
+      <div class="chart-note">
+        <div class="chart-note-box"></div>
+        <span>Relevance floor threshold. Bars to the left are dropped from the context.</span>
+      </div>
+    </div>
+  `;
 }
 
-document.getElementById('send').onclick=()=>ask(qIn.value);
-qIn.addEventListener('keydown',e=>{if(e.key==='Enter')ask(qIn.value);});
+function renderPrompt(messages) {
+  if (!messages) return '';
+  return messages.map(m => {
+    const roleClass = m.role === 'system' ? 'system' : 'user';
+    return `<div style="margin-bottom:12px"><span class="term-role ${roleClass}">${esc(m.role)}:</span><span style="color:var(--text)">${esc(m.content)}</span></div>`;
+  }).join('');
+}
+
+function appendUserMsg(q) {
+  const d = document.createElement('div');
+  d.className = 'msg me';
+  d.innerHTML = `<div class="bub">${esc(q)}</div>`;
+  log.appendChild(d);
+  d.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function appendBotMsg(data) {
+  const g = data.grounded;
+  
+  // Verdict Badge
+  const verdictBadge = g
+    ? `<div class="verdict-badge v-ok">
+         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+         Grounded — answered from documents
+       </div>`
+    : `<div class="verdict-badge v-no">
+         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+         Abstained — not in knowledge base
+       </div>`;
+       
+  // Meta info
+  let metaHtml = '';
+  if (g && data.answer && data.answer.source) {
+    metaHtml = `Source document: <b>${esc(data.answer.source)}</b> &nbsp;&middot;&nbsp; ${data.terms.length} query terms: ${data.terms.map(t=>esc(t)).join(', ')}`;
+  } else {
+    metaHtml = `${data.terms.length} query terms: ${data.terms.map(t=>esc(t)).join(', ') || '—'}`;
+  }
+
+  // Terms Pill Group
+  const termsHtml = data.terms && data.terms.length
+    ? data.terms.map(t => `<span class="pill">${esc(t)}</span>`).join('')
+    : '<span class="pill dim">None after stopword removal</span>';
+    
+  // Decision Info
+  const decisionHtml = g
+    ? `<span class="pill" style="color:var(--green); border-color:rgba(16,185,129,0.4); background:var(--green-dim)">Grounded = true</span>
+       <span class="pill dim">${data.hits ? data.hits.length : 0} doc(s) injected</span>`
+    : `<span class="pill" style="color:var(--amber); border-color:rgba(245,158,11,0.4); background:var(--amber-dim)">Grounded = false</span>
+       <span class="pill dim">0 docs injected — preventing hallucination</span>`;
+
+  // Answer text
+  const answerText = data.answer && data.answer.answer ? data.answer.answer : 'No answer generated.';
+
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+  d.innerHTML = `
+    <div class="bot-card">
+      <div class="bot-header">
+        ${verdictBadge}
+        <div class="bot-answer">${esc(answerText)}</div>
+        <div class="bot-meta">${metaHtml}</div>
+      </div>
+      
+      <details>
+        <summary>Show what happened (the real pipeline)</summary>
+        <div class="pipeline">
+          <div class="stage">
+            <div class="stage-num">1</div>
+            <div class="stage-content">
+              <div class="stage-title">Tokenized Query Terms</div>
+              <div class="pill-group">${termsHtml}</div>
+            </div>
+          </div>
+          
+          <div class="stage">
+            <div class="stage-num">2</div>
+            <div class="stage-content">
+              <div class="stage-title">BM25 Scores vs Relevance Floor</div>
+              ${renderScoreBars(data.scored, data.floor)}
+            </div>
+          </div>
+          
+          <div class="stage">
+            <div class="stage-num">3</div>
+            <div class="stage-content">
+              <div class="stage-title">Decision</div>
+              <div class="pill-group">${decisionHtml}</div>
+            </div>
+          </div>
+          
+          <div class="stage">
+            <div class="stage-num">4</div>
+            <div class="stage-content">
+              <div class="stage-title">Assembled Prompt (Cache-Aware)</div>
+              <div class="term-window">
+                <div class="term-header">
+                  <div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div>
+                  <span style="margin-left:8px; opacity:0.7">prompt_assembler.sh</span>
+                </div>
+                <div class="term-body">${renderPrompt(data.messages)}</div>
+                <div class="term-cache">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><path d="M20 6 9 17l-5-5"/></svg>
+                  <span>The [system + prefs] prefix is byte-identical across queries, allowing the inference endpoint to reuse its KV cache. Volatile knowledge sits last.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+  `;
+  
+  log.appendChild(d);
+  d.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+let isBusy = false;
+async function ask(q) {
+  if (isBusy || !q.trim()) return;
+  isBusy = true;
+  sendBtn.disabled = true;
+  qIn.value = '';
+  
+  if (log.querySelector('.empty-state')) log.innerHTML = '';
+  
+  appendUserMsg(q);
+  
+  try {
+    const r = await fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: q })
+    });
+    
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+    
+    appendBotMsg(data);
+  } catch (e) {
+    const d = document.createElement('div');
+    d.className = 'msg bot';
+    d.innerHTML = `
+      <div class="bot-card">
+        <div class="bot-header">
+          <div class="verdict-badge v-no" style="color:var(--red);background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.2)">
+            Error
+          </div>
+          <div class="bot-answer" style="color:var(--red)">${esc(e.message)}</div>
+        </div>
+      </div>
+    `;
+    log.appendChild(d);
+    d.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  } finally {
+    isBusy = false;
+    sendBtn.disabled = false;
+    qIn.focus();
+  }
+}
+
+sendBtn.onclick = () => ask(qIn.value);
+qIn.addEventListener('keydown', e => {
+  if (e.key === 'Enter') ask(qIn.value);
+});
 </script>
 </body>
 </html>
