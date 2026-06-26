@@ -4,10 +4,24 @@ All notable changes to groundedwork are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
-### Planned (v0.2)
-- Opt-in hybrid retrieval (BM25 + a small local embedding model) to close the paraphrase gap — the one limitation of keyword-only retrieval. Ships as an extra so the zero-dependency default is unchanged.
+### Planned
 - On-disk persistence for the index.
-- Streaming-friendly prompt assembly.
+- `compact()` — signature compaction for code corpora (a clean reimplementation of a ContextForge idea).
+- MCP server — groundedwork as a tool for agent hosts.
+
+## [0.2.0] — 2026-06-26
+
+### Added
+- **Opt-in hybrid retrieval** — pass an `embedder` (any object with `encode(texts) -> vectors`, or a bare callable) and `retrieve()` fuses the BM25 ranking with a dense-similarity ranking via Reciprocal Rank Fusion (RRF), closing the paraphrase gap where a query shares meaning but not words with the relevant document. Python: `pip install "groundedwork[hybrid]"` (model2vec). TypeScript: caller-supplied embedder, no peer dependency.
+- **`bench/paraphrase_eval.py`** — the empirical before/after. Measured on a real model: paraphrase recall@1 **1/4 → 2/4**, with **zero regression** on the 390 exact-match cases and abstention intact. The script asserts no-regression and no-broken-abstention.
+- New config: `rrf_k` (fusion constant, default 60) and `dense_floor` (min cosine for a keyword-less hit to ground, default 0.30).
+
+### Changed
+- The zero-dependency keyword default is **unchanged and still byte-identical** across Python and TypeScript (parity harness green). Hybrid is strictly opt-in.
+
+### Safety
+- **Zero-norm guard** — a degenerate or empty embedding is normalized to an all-zero vector (cosine 0), so it can never fabricate a grounded hit. Abstention holds in hybrid mode.
+- The embedder is **retrieval-side only**; groundedwork still never calls a generation model (BYOM intact).
 
 ## [0.1.0] — 2026-06-25
 

@@ -1,6 +1,6 @@
 {
   "name": "groundedwork",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Retrieval that knows when it doesn't know. A tiny, dependency-free BM25 working-set layer for giving an LLM a knowledge base bigger than its context window — grounded and abstaining by default.",
   "type": "module",
   "main": "./dist/index.js",

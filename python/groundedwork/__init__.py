@@ -18,7 +18,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Optional
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Words too common to carry retrieval signal. Mirrors the validated browser demo.
 _STOP = set(
@@ -103,6 +103,9 @@ class GroundedWork:
         b: float = 0.75,
         system_prompt: str = GROUNDING_PROMPT,
         prefs: str = "",
+        embedder: "Optional[object]" = None,
+        rrf_k: int = 60,
+        dense_floor: float = 0.30,
     ) -> None:
         self.min_score = min_score
         self.top_k = top_k
@@ -110,11 +113,40 @@ class GroundedWork:
         self.b = b
         self.system_prompt = system_prompt
         self.prefs = prefs  # stable per-user/persona text, pinned into the cached prefix
+        # BYOM embedder: any object/callable exposing encode(list[str]) -> list[list[float]].
+        # Supply model2vec, sentence-transformers, an OpenAI client wrapper, anything.
+        # None (default) = pure BM25 keyword retrieval, zero dependencies. Opt-in only.
+        self.embedder = embedder
+        self.rrf_k = rrf_k  # reciprocal-rank-fusion constant (standard default 60)
+        self.dense_floor = dense_floor  # min cosine for a keyword-less hit to ground
         self._docs: list[Doc] = []
         self._tf: list[dict[str, int]] = []
         self._len: list[int] = []
         self._df: dict[str, int] = {}
         self._avgdl: float = 0.0
+        self._emb: "Optional[list]" = None  # cached doc embeddings (unit-normalized)
+
+    @staticmethod
+    def _encode(embedder, texts: "list[str]") -> "list[list[float]]":
+        """Call the BYOM embedder uniformly, whether it's a callable or has .encode()."""
+        if hasattr(embedder, "encode"):
+            out = embedder.encode(texts)
+        else:
+            out = embedder(texts)
+        # accept numpy arrays or lists; normalize to plain python lists of floats
+        return [list(map(float, v)) for v in out]
+
+    @staticmethod
+    def _unit(v: "list[float]") -> "list[float]":
+        # Near-zero-norm vectors (degenerate or empty embeddings, e.g. a query of
+        # all-unknown tokens) carry no usable direction. Return all-zeros so their
+        # cosine with anything is 0 — below the dense floor — and they cannot
+        # fabricate a paraphrase "hit". This keeps abstention honest when the
+        # embedder produces a meaningless vector.
+        norm = math.sqrt(sum(x * x for x in v))
+        if norm < 1e-9:
+            return [0.0] * len(v)
+        return [x / norm for x in v]
 
     # -- ingestion --------------------------------------------------------
     def add(self, id: str, title: str, body: str, answer: str = "", **meta) -> "GroundedWork":
@@ -141,15 +173,33 @@ class GroundedWork:
         return len(self._docs)
 
     # -- retrieval --------------------------------------------------------
+    def _embed_docs(self) -> "list":
+        """Lazily embed + cache all docs (title weighted, matching BM25 indexing)."""
+        if self._emb is None and self.embedder is not None:
+            texts = [d.title + " " + d.title + " " + d.body for d in self._docs]
+            self._emb = [self._unit(v) for v in self._encode(self.embedder, texts)]
+        return self._emb or []
+
     def retrieve(self, query: str, top_k: Optional[int] = None) -> Retrieval:
-        """Return the relevance-floored working set for a query."""
+        """Return the relevance-floored working set for a query.
+
+        Pure BM25 keyword retrieval by default. If an `embedder` was supplied,
+        a dense similarity ranking is fused with the keyword ranking via
+        Reciprocal Rank Fusion (RRF) — closing the paraphrase gap where a query
+        shares meaning but not words with the relevant document. The relevance
+        floor and grounding/abstention behavior are unchanged: fusion reorders
+        candidates, but a query that keyword-matches nothing relevant and
+        embeds near nothing relevant still abstains.
+        """
         k = top_k if top_k is not None else self.top_k
         terms = tokenize(query)
         n = len(self._docs)
-        if not terms or n == 0:
+        if n == 0 or (not terms and self.embedder is None):
             return Retrieval(query=query, hits=[], terms=terms)
 
-        scores: list[tuple[int, float, list[str]]] = []
+        # --- BM25 keyword scores (always computed) ---
+        kw: dict[int, float] = {}
+        matched_by: dict[int, list[str]] = {}
         for i, tf in enumerate(self._tf):
             s = 0.0
             matched: list[str] = []
@@ -165,14 +215,50 @@ class GroundedWork:
                 )
                 matched.append(t)
             if s > 0:
-                scores.append((i, s, matched))
+                kw[i] = s
+                matched_by[i] = matched
 
-        scores.sort(key=lambda x: -x[1])
-        hits = [
-            Hit(doc=self._docs[i], score=s, matched=m)
-            for i, s, m in scores[:k]
-            if s >= self.min_score  # the floor: below it, inject nothing
-        ]
+        if self.embedder is None:
+            # pure keyword path (unchanged, zero-dependency default)
+            ranked = sorted(kw.items(), key=lambda x: -x[1])
+            hits = [
+                Hit(doc=self._docs[i], score=s, matched=matched_by.get(i, []))
+                for i, s in ranked[:k]
+                if s >= self.min_score
+            ]
+            return Retrieval(query=query, hits=hits, terms=terms)
+
+        # --- hybrid path: fuse keyword + dense via Reciprocal Rank Fusion ---
+        docvecs = self._embed_docs()
+        qv = self._unit(self._encode(self.embedder, [query])[0])
+        dense = [(i, sum(a * b for a, b in zip(qv, docvecs[i]))) for i in range(n)]
+        dense.sort(key=lambda x: -x[1])
+        kw_rank = {i: r for r, (i, _) in enumerate(sorted(kw.items(), key=lambda x: -x[1]))}
+        dense_rank = {i: r for r, (i, _) in enumerate(dense)}
+
+        rk = self.rrf_k
+        fused: dict[int, float] = {}
+        for i in range(n):
+            score = 0.0
+            if i in kw_rank:
+                score += 1.0 / (rk + kw_rank[i] + 1)
+            if i in dense_rank:
+                score += 1.0 / (rk + dense_rank[i] + 1)
+            if score > 0:
+                fused[i] = score
+
+        ranked = sorted(fused.items(), key=lambda x: -x[1])
+        # Grounding floor in hybrid mode: keep a candidate if it has a real
+        # keyword match clearing the floor OR a strong dense signal. This keeps
+        # paraphrase hits (no keyword overlap) while still abstaining on noise.
+        hits = []
+        dense_sim = {i: s for i, s in dense}
+        for i, _ in ranked[:k]:
+            kw_ok = kw.get(i, 0.0) >= self.min_score
+            dense_ok = dense_sim.get(i, 0.0) >= self.dense_floor
+            if kw_ok or dense_ok:
+                hits.append(Hit(doc=self._docs[i], score=kw.get(i, 0.0),
+                                matched=matched_by.get(i, [])))
         return Retrieval(query=query, hits=hits, terms=terms)
 
     # -- prompt assembly --------------------------------------------------

@@ -10,7 +10,7 @@ groundedwork is a dependency-free retrieval + prompt-assembly layer. It indexes 
 
 ## Roadmap & spec-driven changes
 
-The roadmap lives in OpenSpec, not in scattered TODOs. Run `openspec list` to see active changes (the planning queue), and read `openspec/changes/<name>/` for the full proposal/design/tasks/spec of each. Current queue: `add-hybrid-embeddings` (v0.2, closes the paraphrase gap), `add-signature-compaction` (code-corpus support, a clean reimplementation of a ContextForge idea), `add-mcp-server` (groundedwork as an MCP tool for agent hosts), `add-disk-persistence`.
+The roadmap lives in OpenSpec, not in scattered TODOs. Run `openspec list` to see active changes (the planning queue) and `openspec list --specs` for the canonical capabilities (shipped behavior). Read `openspec/changes/<name>/` or `openspec/changes/archive/<name>/` for the full proposal/design/tasks/spec. Shipped: `hybrid-retrieval` (v0.2, closes the paraphrase gap, opt-in). Queue: `add-signature-compaction` (code-corpus support, a clean reimplementation of a ContextForge idea), `add-mcp-server` (groundedwork as an MCP tool for agent hosts), `add-disk-persistence`.
 
 Any change touching retrieval behavior, a public API, or an invariant goes through OpenSpec first: `openspec new change <name>`, author the four files, `openspec validate <name> --strict`. The config at `openspec/config.yaml` encodes the project invariants the proposal/design must respect. Pure bug fixes / docs / test additions do not require a change proposal.
 
@@ -92,6 +92,8 @@ A change that passes one language's unit tests but breaks parity is a **bug**, e
 - Default `system_prompt` is the grounding instruction (`GROUNDING_PROMPT`); it must instruct the model to answer only from context and not guess.
 - `messages()` order is exactly: `system(stable_prefix)`, then `user(knowledge)` IF grounded, then `user(query)`.
 - `stable_prefix()` is query-independent (same output regardless of the question).
+- **Hybrid is opt-in.** No `embedder` → pure BM25, zero dependencies, byte-identical across languages (this is what the parity harness checks). With an `embedder`, `retrieve()` fuses BM25 + dense via RRF (`rrf_k=60`); a hit grounds if BM25 ≥ `min_score` OR cosine ≥ `dense_floor` (0.30). The dense path is NOT parity-asserted across languages (the embedder is the caller's, per-runtime) — only the keyword default is. Never ship an embedder as a hard dependency; it stays a caller-supplied, retrieval-side ranker (BYOM intact — no *generation* model is ever called).
+- Embedding vectors are unit-normalized; a near-zero-norm vector becomes all-zeros (cosine 0) so a degenerate embedding cannot fabricate a grounded hit.
 
 ### Adding a third language (e.g. Go, Rust)
 

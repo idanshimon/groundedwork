@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "groundedwork"
-version = "0.1.0"
+version = "0.2.0"
 description = "Retrieval that knows when it doesn't know. A tiny, dependency-free BM25 working-set layer for giving an LLM a knowledge base bigger than its context window — grounded and abstaining by default."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -21,7 +21,8 @@ classifiers = [
 dependencies = []   # zero runtime dependencies — stdlib only
 
 [project.optional-dependencies]
-dev = ["pytest>=7", "rank-bm25>=0.2"]
+dev = ["pytest>=7", "rank-bm25>=0.2", "model2vec>=0.3"]
+hybrid = ["model2vec>=0.3"]
 
 [project.urls]
 Homepage = "https://github.com/idanshimon/groundedwork"

@@ -12,6 +12,7 @@ help:
 	@echo "  make parity    cross-language parity check (vs golden.json)"
 	@echo "  make golden    regenerate the parity golden snapshot"
 	@echo "  make corpus    regenerate the large real-corpus fixture"
+	@echo "  make paraphrase  measure keyword vs hybrid paraphrase recall"
 	@echo "  make play      run the live in-browser playground (localhost:8000)"
 	@echo "  make clean     remove build/test artifacts"
 
@@ -40,6 +41,11 @@ golden:
 
 corpus:
 	python bench/gen_corpus.py
+
+paraphrase:
+	@echo "Measuring paraphrase recall: keyword vs hybrid (needs the [hybrid] extra)…"
+	cd python && pip install -e ".[hybrid]" >/dev/null 2>&1 || true
+	python bench/paraphrase_eval.py
 
 play:
 	@echo "groundedwork playground → http://localhost:8000  (Ctrl-C to stop)"

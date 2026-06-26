@@ -64,9 +64,24 @@ Built on the ideas of **[ContextForge](https://github.com/Betanu701/ContextForge
 - **One obvious, flat API** — the intuitive path is the safe path.
 - **Cross-language parity** — Python and TypeScript run the same `fixtures/nimbus.json`, so they can't silently drift.
 
-## The honest limitation
+## The paraphrase gap, and the opt-in fix
 
-It's BM25 keyword retrieval — fast, transparent, no model required, but it matches on words, so **paraphrased questions can miss** (and occasionally match the wrong doc with false confidence). Grounding + the floor limit the blast radius; **hybrid embedding retrieval to actually close the gap is the v0.2 headline**, opt-in so the zero-dependency default stays zero-dependency. We shipped the honest version first.
+The default is BM25 keyword retrieval — fast, transparent, zero-dependency — but it matches on **words**, so a question phrased differently from your docs ("how do I get my money back" vs a doc titled "Refund Policy") can miss. Grounding + the floor limit the blast radius (a miss abstains rather than bluffs), but they don't close the gap.
+
+**Hybrid retrieval closes it — opt-in.** Pass an `embedder` and groundedwork fuses the keyword ranking with a dense-similarity ranking (Reciprocal Rank Fusion), so meaning-matches survive even with zero shared words:
+
+```python
+from groundedwork import GroundedWork
+from model2vec import StaticModel          # pip install "groundedwork[hybrid]"
+
+embedder = StaticModel.from_pretrained("minishlab/potion-base-8M")
+kb = GroundedWork(embedder=embedder).add_many(docs)   # that's the whole change
+kb.ask("how do I get my money back")        # now finds the refund doc
+```
+
+**Measured, not hand-waved** (`bench/paraphrase_eval.py`, real model): paraphrase recall@1 goes **1/4 → 2/4**, with **zero regression** on the 390 exact-match cases and abstention intact. It's a real, bounded improvement — not "embeddings fix everything." Two of the four paraphrase cases are genuinely ambiguous and still miss; we report the honest number.
+
+Three things stay true in hybrid mode: it's **opt-in** (no embedder → pure BM25, zero dependencies, byte-identical across languages), the embedder is **retrieval-side only** (it ranks documents — groundedwork still never calls a generation model, so **BYOM** is intact), and abstention holds (a zero-norm guard stops a degenerate embedding from fabricating a hit).
 
 ## How it works
 
@@ -74,7 +89,7 @@ It's BM25 keyword retrieval — fast, transparent, no model required, but it mat
   <img src="docs/assets/architecture.png" alt="groundedwork data-flow: docs and question into a BM25 index, through the relevance floor, branching to a grounded working set or an honest abstention" width="100%">
 </p>
 
-Your docs are indexed in memory (BM25, no embeddings). A question is scored against them; the **relevance floor** gates the result. If something clears the floor, you get a grounded working set assembled into a cache-optimal prompt for *your* model. If nothing does, `grounded` is `false` and you abstain — no model call. groundedwork never calls the model itself; **you bring your own** (local, Azure, OpenAI, Anthropic — anything). Full details in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Your docs are indexed in memory (BM25; optionally embedded too if you supply an `embedder`). A question is scored against them — keyword-only by default, or keyword+dense fused via RRF in hybrid mode; the **relevance floor** gates the result. If something clears the floor, you get a grounded working set assembled into a cache-optimal prompt for *your* model. If nothing does, `grounded` is `false` and you abstain — no model call. groundedwork never calls the generation model itself; **you bring your own** (local, Azure, OpenAI, Anthropic — anything). Full details in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Repository layout
 

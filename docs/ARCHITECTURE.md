@@ -115,16 +115,38 @@ CI (`.github/workflows/tests.yml`) runs the Python suite on 3.9/3.11/3.13, the T
 ## 6. Non-goals (what groundedwork deliberately does NOT do)
 
 - **It does not call any LLM.** No provider SDK, no API keys, no `base_url` config. You bring your own model client (local Ollama/llama.cpp/vLLM, Azure OpenAI, OpenAI, Anthropic — anything). `messages()`/`prompt()` hand you a payload; you make the call. This is why "what about local / Azure / X?" is answered by "all of them, zero config."
-- **It does not embed.** BM25 keyword retrieval only, by choice (transparent, fast, model-free, deterministic). The cost is the paraphrase gap (§7).
+- **It does not embed by default.** BM25 keyword retrieval out of the box (transparent, fast, model-free, deterministic, zero-dependency). Dense embeddings are available **opt-in** to close the paraphrase gap — see §7.
 - **It is not a persistence layer (yet).** v0.1 is in-memory. On-disk indexes are roadmap.
 
 ---
 
-## 7. Known limitation: the paraphrase gap
+## 7. The paraphrase gap and the opt-in hybrid fix
 
 BM25 matches on shared *words*. A question phrased with different words than the source document can miss — and worse, a coincidental word overlap can surface the **wrong** document with false confidence (e.g. "show up at my door" matching a "Pausing" doc on the stray word "up"). This is inherent to keyword retrieval, not a bug.
 
-The grounding prompt and the relevance floor *limit the blast radius* of a miss (the model is told not to guess; weak matches are dropped). The actual *fix* is hybrid retrieval (BM25 + a small local embedding model), which is the **v0.2** headline — shipped opt-in so the zero-dependency default stays zero-dependency. The fixture encodes this honestly: the "show up at my door" case asserts the wrong-doc behavior, so any future embedding work must visibly change it.
+The grounding prompt and the relevance floor *limit the blast radius* of a miss (the model is told not to guess; weak matches are dropped). The actual *fix* is **hybrid retrieval**, shipped opt-in.
+
+### 7.1 How hybrid works
+
+When the caller supplies an `embedder` (any object with `encode(texts) -> vectors`, or a bare callable — model2vec, sentence-transformers, an OpenAI-embeddings wrapper, anything), `retrieve()` computes two rankings and fuses them:
+
+1. **Keyword ranking** — the usual BM25 order.
+2. **Dense ranking** — cosine similarity between the query embedding and each doc embedding (docs embedded once and cached; vectors unit-normalized).
+3. **Reciprocal Rank Fusion (RRF)** — each doc scores `Σ 1/(k + rank_i)` across the two rankings (k=60). RRF fuses *ranks*, not raw scores, so the incomparable BM25 and cosine scales never need calibration.
+
+The relevance floor still governs grounding: a candidate is kept if it has a real keyword match over the floor **or** a dense similarity over `dense_floor` (default 0.30). A **zero-norm guard** maps a degenerate/empty embedding to an all-zero vector (cosine 0), so a meaningless embedding can never fabricate a grounded hit — abstention stays honest.
+
+### 7.2 Why this does not breach BYOM
+
+The embedder is **retrieval-side only**: it ranks documents. groundedwork still never calls a *generation* model — `messages()`/`prompt()` hand you a payload and you make the completion call. "BYOM" is about the generation model and remains intact; the embedder is just a better ranker you opt into.
+
+### 7.3 Measured result
+
+`bench/paraphrase_eval.py` (real model2vec `potion-base-8M`): paraphrase recall@1 **1/4 → 2/4**, **390/390** exact-match cases preserved, **0** out-of-corpus queries wrongly grounded. A real, bounded win — not "embeddings fix everything." Two paraphrase cases are genuinely ambiguous and still miss; the bench reports the honest number and asserts no regression.
+
+### 7.4 Cross-language note
+
+The keyword path is byte-identical across Python and TypeScript (parity harness, §5). The dense path is **not** asserted equal across languages — the embedder is the caller's, and a Python embedder (model2vec) and a JS embedder (transformers.js) produce different vectors. Asserting cross-language dense equality would require *shipping* an embedder, which breaks both BYOM and zero-dependency. Instead each language tests its hybrid path independently with a deterministic in-test embedder; the **fusion math** (RRF, floor, zero-norm guard) is identical by construction.
 
 ---
 

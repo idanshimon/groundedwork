@@ -15,7 +15,7 @@
  * as defaults. See README for the evidence.
  */
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.2.0";
 
 const STOP = new Set(
   ("a an the is are was were be been do does did of to in on at for and or but with " +
@@ -30,6 +30,18 @@ export function tokenize(text: string): string[] {
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
     .filter((w) => w.length > 1 && !STOP.has(w));
+}
+
+/** Unit-normalize a vector (for cosine similarity via dot product). A near-zero
+ *  vector (degenerate/empty embedding) carries no usable direction, so it is
+ *  returned as all-zeros — its cosine with anything is 0, below the dense floor,
+ *  so it cannot fabricate a paraphrase hit and abstention stays honest. */
+function unit(v: number[]): number[] {
+  let n = 0;
+  for (const x of v) n += x * x;
+  n = Math.sqrt(n);
+  if (n < 1e-9) return v.map(() => 0);
+  return v.map((x) => x / n);
 }
 
 export interface Doc {
@@ -77,6 +89,14 @@ export const GROUNDING_PROMPT =
   "knowledge provided below. If the answer is not contained in it, say you " +
   "do not have that information — do not guess or use outside knowledge.";
 
+/** BYOM embedder: any object exposing encode(texts) => vectors, or a bare
+ *  function with the same shape. Supply a model2vec/transformers.js/OpenAI
+ *  wrapper. Omit it (default) for pure BM25 keyword retrieval, zero deps. */
+export interface Embedder {
+  encode(texts: string[]): number[][] | Promise<number[][]>;
+}
+export type EmbedderLike = Embedder | ((texts: string[]) => number[][]);
+
 export interface Options {
   /** Relevance floor: a query whose best match scores below this returns an
    *  empty, ungrounded result instead of distractors. Default 0.5 (keeps real
@@ -90,6 +110,13 @@ export interface Options {
   systemPrompt?: string;
   /** Stable per-user/persona text, pinned into the cached prefix. Default "". */
   prefs?: string;
+  /** Optional BYOM embedder. When set, retrieve() fuses BM25 + dense via RRF
+   *  to close the paraphrase gap. When omitted, retrieval is pure BM25. */
+  embedder?: EmbedderLike;
+  /** Reciprocal-rank-fusion constant. Default 60. */
+  rrfK?: number;
+  /** Min cosine for a keyword-less (paraphrase) hit to clear grounding. Default 0.30. */
+  denseFloor?: number;
 }
 
 export class GroundedWork {
@@ -99,12 +126,16 @@ export class GroundedWork {
   readonly b: number;
   readonly systemPrompt: string;
   readonly prefs: string;
+  readonly embedder?: EmbedderLike;
+  readonly rrfK: number;
+  readonly denseFloor: number;
 
   private docs: Doc[] = [];
   private tf: Map<string, number>[] = [];
   private len: number[] = [];
   private df = new Map<string, number>();
   private avgdl = 0;
+  private emb: number[][] | null = null; // cached unit-normalized doc vectors
 
   constructor(opts: Options = {}) {
     this.minScore = opts.minScore ?? 0.5;
@@ -113,6 +144,9 @@ export class GroundedWork {
     this.b = opts.b ?? 0.75;
     this.systemPrompt = opts.systemPrompt ?? GROUNDING_PROMPT;
     this.prefs = opts.prefs ?? "";
+    this.embedder = opts.embedder;
+    this.rrfK = opts.rrfK ?? 60;
+    this.denseFloor = opts.denseFloor ?? 0.30;
   }
 
   /** Add one document. Title is weighted 2x (matches the reference). Chainable. */
@@ -137,16 +171,44 @@ export class GroundedWork {
     return this.docs.length;
   }
 
-  /** Return the relevance-floored working set for a query. */
+  private encode(texts: string[]): number[][] {
+    const e = this.embedder!;
+    const out = typeof e === "function" ? e(texts) : e.encode(texts);
+    if (out instanceof Promise) {
+      throw new Error(
+        "groundedwork: synchronous retrieve() requires a synchronous embedder " +
+          "(encode() must return number[][], not a Promise). Pre-embed with an " +
+          "async model, or supply a sync embedder.",
+      );
+    }
+    return out.map((v) => unit(v));
+  }
+
+  private embedDocs(): number[][] {
+    if (this.emb === null && this.embedder) {
+      const texts = this.docs.map((d) => d.title + " " + d.title + " " + d.body);
+      this.emb = this.encode(texts);
+    }
+    return this.emb ?? [];
+  }
+
+  /** Return the relevance-floored working set for a query.
+   *
+   *  Pure BM25 keyword retrieval by default. If an `embedder` was supplied, a
+   *  dense similarity ranking is fused with the keyword ranking via Reciprocal
+   *  Rank Fusion (RRF) to close the paraphrase gap. The relevance floor and
+   *  grounding/abstention behavior are preserved. */
   retrieve(query: string, topK?: number): Retrieval {
     const k = topK ?? this.topK;
     const terms = tokenize(query);
     const n = this.docs.length;
-    if (terms.length === 0 || n === 0) {
+    if (n === 0 || (terms.length === 0 && !this.embedder)) {
       return { query, hits: [], terms, grounded: false };
     }
 
-    const scored: { i: number; score: number; matched: string[] }[] = [];
+    // --- BM25 keyword scores (always computed) ---
+    const kw = new Map<number, number>();
+    const matchedBy = new Map<number, string[]>();
     for (let i = 0; i < n; i++) {
       const tf = this.tf[i];
       const dl = this.len[i];
@@ -160,15 +222,59 @@ export class GroundedWork {
         s += (idf * (f * (this.k1 + 1))) / (f + this.k1 * (1 - this.b + (this.b * dl) / (this.avgdl || 1)));
         matched.push(t);
       }
-      if (s > 0) scored.push({ i, score: s, matched });
+      if (s > 0) {
+        kw.set(i, s);
+        matchedBy.set(i, matched);
+      }
     }
 
-    scored.sort((a, b) => b.score - a.score);
-    const hits: Hit[] = scored
-      .slice(0, k)
-      .filter((x) => x.score >= this.minScore) // the floor
-      .map((x) => ({ doc: this.docs[x.i], score: x.score, matched: x.matched }));
+    if (!this.embedder) {
+      // pure keyword path (unchanged, zero-dependency default)
+      const ranked = [...kw.entries()].sort((a, b) => b[1] - a[1]);
+      const hits: Hit[] = ranked
+        .slice(0, k)
+        .filter(([, s]) => s >= this.minScore)
+        .map(([i, s]) => ({ doc: this.docs[i], score: s, matched: matchedBy.get(i) ?? [] }));
+      return { query, hits, terms, grounded: hits.length > 0 };
+    }
 
+    // --- hybrid path: fuse keyword + dense via Reciprocal Rank Fusion ---
+    const docvecs = this.embedDocs();
+    const qv = this.encode([query])[0];
+    const dense: { i: number; sim: number }[] = [];
+    for (let i = 0; i < n; i++) {
+      let dot = 0;
+      const dv = docvecs[i];
+      for (let j = 0; j < qv.length; j++) dot += qv[j] * dv[j];
+      dense.push({ i, sim: dot });
+    }
+    dense.sort((a, b) => b.sim - a.sim);
+    const denseSim = new Map<number, number>(dense.map((d) => [d.i, d.sim]));
+    const denseRank = new Map<number, number>(dense.map((d, r) => [d.i, r]));
+    const kwSorted = [...kw.entries()].sort((a, b) => b[1] - a[1]);
+    const kwRank = new Map<number, number>(kwSorted.map(([i], r) => [i, r]));
+
+    const rk = this.rrfK;
+    const fused: { i: number; score: number }[] = [];
+    for (let i = 0; i < n; i++) {
+      let score = 0;
+      if (kwRank.has(i)) score += 1 / (rk + kwRank.get(i)! + 1);
+      if (denseRank.has(i)) score += 1 / (rk + denseRank.get(i)! + 1);
+      if (score > 0) fused.push({ i, score });
+    }
+    fused.sort((a, b) => b.score - a.score);
+
+    // Grounding floor in hybrid mode: keep a candidate with a real keyword
+    // match over the floor OR a strong dense signal (paraphrase hit).
+    const hits: Hit[] = [];
+    for (const { i } of fused.slice(0, k)) {
+      const kwScore = kw.get(i) ?? 0;
+      const kwOk = kwScore >= this.minScore;
+      const denseOk = (denseSim.get(i) ?? 0) >= this.denseFloor;
+      if (kwOk || denseOk) {
+        hits.push({ doc: this.docs[i], score: kwScore, matched: matchedBy.get(i) ?? [] });
+      }
+    }
     return { query, hits, terms, grounded: hits.length > 0 };
   }
 

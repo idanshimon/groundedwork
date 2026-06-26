@@ -46,7 +46,7 @@ SCENARIOS = [
     {"label": "🚫 Honest abstention", "query": "What is the capital of France?",
      "teaches": "Not in the knowledge base. The floor blocks everything and the engine refuses to guess — grounded=false."},
     {"label": "🌀 Paraphrase miss", "query": "when does it show up at my door?",
-     "teaches": "BM25 is keyword-based. 'show up at my door' shares no words with the shipping doc, so it misses or mis-ranks — the limitation v0.2 embeddings will fix."},
+     "teaches": "BM25 is keyword-based. 'show up at my door' shares no words with the shipping doc, so it misses or mis-ranks. v0.2 adds opt-in hybrid (BM25 + embeddings) that closes this gap on real corpora — measured 1/4 to 2/4 paraphrase recall in bench/paraphrase_eval.py. (This 24-doc demo is too small for a tiny embedder to help here; the win shows on the larger corpus.)"},
     {"label": "📦 Multi-term query", "query": "how do I pause my subscription billing?",
      "teaches": "Several terms combine. See how each scored document contributes."},
     {"label": "☕ Product question", "query": "do you have decaf coffee?",
