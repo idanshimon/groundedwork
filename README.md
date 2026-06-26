@@ -41,8 +41,20 @@ groundedwork/
 ├── python/         pip package — reference implementation
 ├── ts/             npm package — TypeScript mirror
 ├── fixtures/       shared cross-language test fixtures (the parity contract)
+├── bench/          cross-language parity harness (emitters + golden snapshot)
+├── docs/           ARCHITECTURE.md — algorithm, design, interface contract
+├── AGENTS.md       machine-oriented guide for AI agents using/extending this
+├── Makefile        `make test` runs everything (both suites + parity)
 └── LICENSE         MIT
 ```
+
+## Tests
+
+```bash
+make test     # python suite + typescript suite + cross-language parity, one command
+```
+
+The two implementations are independent code but **one specification**. A golden-output harness (`bench/`) proves they produce numerically identical retrieval results to 9 decimal places — so they can't silently drift. CI runs it on Python 3.9/3.11/3.13 and Node 18/20/22. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the algorithm and design, and [`AGENTS.md`](AGENTS.md) if you're an AI agent integrating or extending it.
 
 ## Credit
 

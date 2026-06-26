@@ -1,0 +1,198 @@
+[
+  {
+    "grounded": true,
+    "hits": [
+      {
+        "id": "returns",
+        "matched": [
+          "refund"
+        ],
+        "score": 3.860548108
+      }
+    ],
+    "query": "How do I get a refund?",
+    "terms": [
+      "refund"
+    ]
+  },
+  {
+    "grounded": true,
+    "hits": [
+      {
+        "id": "ship-us",
+        "matched": [
+          "arrive",
+          "order"
+        ],
+        "score": 4.452878494
+      }
+    ],
+    "query": "When will my order arrive?",
+    "terms": [
+      "order",
+      "arrive"
+    ]
+  },
+  {
+    "grounded": true,
+    "hits": [
+      {
+        "id": "tiers",
+        "matched": [
+          "plans",
+          "subscription"
+        ],
+        "score": 6.948573079
+      },
+      {
+        "id": "pause",
+        "matched": [
+          "subscription"
+        ],
+        "score": 3.358933974
+      },
+      {
+        "id": "sustain",
+        "matched": [
+          "subscription"
+        ],
+        "score": 2.056571057
+      }
+    ],
+    "query": "What subscription plans do you have?",
+    "terms": [
+      "subscription",
+      "plans",
+      "have"
+    ]
+  },
+  {
+    "grounded": true,
+    "hits": [
+      {
+        "id": "ethiopia",
+        "matched": [
+          "ethiopia"
+        ],
+        "score": 4.862685189
+      },
+      {
+        "id": "decaf",
+        "matched": [
+          "coffee"
+        ],
+        "score": 2.013808317
+      }
+    ],
+    "query": "Tell me about your Ethiopia coffee",
+    "terms": [
+      "tell",
+      "ethiopia",
+      "coffee"
+    ]
+  },
+  {
+    "grounded": true,
+    "hits": [
+      {
+        "id": "pourover",
+        "matched": [
+          "over",
+          "pour"
+        ],
+        "score": 6.916972584
+      },
+      {
+        "id": "grind",
+        "matched": [
+          "over",
+          "pour"
+        ],
+        "score": 3.873229491
+      }
+    ],
+    "query": "How do I make a pour over?",
+    "terms": [
+      "make",
+      "pour",
+      "over"
+    ]
+  },
+  {
+    "grounded": true,
+    "hits": [
+      {
+        "id": "pause",
+        "matched": [
+          "pause",
+          "subscription"
+        ],
+        "score": 6.301785923
+      },
+      {
+        "id": "tiers",
+        "matched": [
+          "subscription"
+        ],
+        "score": 3.141057176
+      },
+      {
+        "id": "sustain",
+        "matched": [
+          "subscription"
+        ],
+        "score": 2.056571057
+      }
+    ],
+    "query": "Can I pause my subscription?",
+    "terms": [
+      "pause",
+      "subscription"
+    ]
+  },
+  {
+    "grounded": true,
+    "hits": [
+      {
+        "id": "decaf",
+        "matched": [
+          "decaf"
+        ],
+        "score": 4.0883215
+      }
+    ],
+    "query": "Do you have decaf?",
+    "terms": [
+      "have",
+      "decaf"
+    ]
+  },
+  {
+    "grounded": true,
+    "hits": [
+      {
+        "id": "pause",
+        "matched": [
+          "up"
+        ],
+        "score": 2.942851949
+      }
+    ],
+    "query": "When does it show up at my door?",
+    "terms": [
+      "show",
+      "up",
+      "door"
+    ]
+  },
+  {
+    "grounded": false,
+    "hits": [],
+    "query": "xyzzy quantum platypus",
+    "terms": [
+      "xyzzy",
+      "quantum",
+      "platypus"
+    ]
+  }
+]
