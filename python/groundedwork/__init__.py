@@ -86,8 +86,10 @@ class GroundedWork:
     Args:
         min_score: relevance floor. A query whose best match scores below this
             returns an EMPTY, ungrounded result instead of near-irrelevant
-            distractors. Default 2.0 (measured to drop distractors while keeping
-            real answers). Set 0.0 for classic always-return-top-k behavior.
+            distractors. Default 0.5 (keeps real matches at any corpus size
+            while dropping noise; BM25 scores scale with corpus size, so a low
+            absolute floor is the safe default). Set 0.0 for classic
+            always-return-top-k behavior; raise it to be stricter.
         top_k:     max docs in a working set.
         k1, b:     BM25 tuning. Defaults match Robertson/Zaragoza standard.
         system_prompt: the grounding instruction. Defaults to GROUNDING_PROMPT.
@@ -95,7 +97,7 @@ class GroundedWork:
 
     def __init__(
         self,
-        min_score: float = 2.0,
+        min_score: float = 0.5,
         top_k: int = 3,
         k1: float = 1.5,
         b: float = 0.75,

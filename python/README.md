@@ -121,7 +121,7 @@ reply = my_llm.chat(system=p["system"], context=p["knowledge"], user=p["user"])
 
 ```python
 GroundedWork(
-    min_score=2.0,   # relevance floor. 0.0 = classic always-return-top-k. Higher = stricter.
+    min_score=0.5,   # relevance floor. 0.0 = classic always-return-top-k. Higher = stricter.
     top_k=3,         # max docs per working set
 )
 ```

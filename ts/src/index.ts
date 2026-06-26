@@ -79,7 +79,9 @@ export const GROUNDING_PROMPT =
 
 export interface Options {
   /** Relevance floor: a query whose best match scores below this returns an
-   *  empty, ungrounded result instead of distractors. Default 2.0. */
+   *  empty, ungrounded result instead of distractors. Default 0.5 (keeps real
+   *  matches at any corpus size; BM25 scores scale with corpus size, so a low
+   *  absolute floor is the safe default). 0.0 = classic always-return-top-k. */
   minScore?: number;
   /** Max docs in a working set. Default 3. */
   topK?: number;
@@ -105,7 +107,7 @@ export class GroundedWork {
   private avgdl = 0;
 
   constructor(opts: Options = {}) {
-    this.minScore = opts.minScore ?? 2.0;
+    this.minScore = opts.minScore ?? 0.5;
     this.topK = opts.topK ?? 3;
     this.k1 = opts.k1 ?? 1.5;
     this.b = opts.b ?? 0.75;
