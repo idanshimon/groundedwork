@@ -8,6 +8,12 @@ Machine-oriented guide for AI coding agents working **on** groundedwork or integ
 
 groundedwork is a dependency-free retrieval + prompt-assembly layer. It indexes documents, retrieves a relevance-floored "working set" via BM25 keyword scoring, and assembles a grounded, cache-optimal prompt for an LLM. It does **not** call any model. Python reference + TypeScript mirror, behavior verified identical to 9 decimal places.
 
+## Roadmap & spec-driven changes
+
+The roadmap lives in OpenSpec, not in scattered TODOs. Run `openspec list` to see active changes (the planning queue), and read `openspec/changes/<name>/` for the full proposal/design/tasks/spec of each. Current queue: `add-hybrid-embeddings` (v0.2, closes the paraphrase gap), `add-signature-compaction` (code-corpus support, a clean reimplementation of a ContextForge idea), `add-mcp-server` (groundedwork as an MCP tool for agent hosts), `add-disk-persistence`.
+
+Any change touching retrieval behavior, a public API, or an invariant goes through OpenSpec first: `openspec new change <name>`, author the four files, `openspec validate <name> --strict`. The config at `openspec/config.yaml` encodes the project invariants the proposal/design must respect. Pure bug fixes / docs / test additions do not require a change proposal.
+
 ---
 
 ## Integrating groundedwork into your project

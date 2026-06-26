@@ -1,0 +1,46 @@
+schema: spec-driven
+
+context: |
+  Project: groundedwork — a tiny, dependency-free BM25 working-set retrieval
+  layer that gives an LLM a knowledge base bigger than its context window.
+  Grounded and abstaining by default.
+
+  Tech stack: Python reference implementation (python/groundedwork/__init__.py,
+  stdlib only) + TypeScript mirror (ts/src/index.ts, zero runtime deps). Both
+  run the same shared fixture (fixtures/nimbus.json). Cross-language parity is
+  verified to 9 decimal places by bench/parity.py against bench/golden.json.
+
+  Lineage: built on the ideas of ContextForge (github.com/Betanu701/ContextForge)
+  by Derek Thomas. Improvements shipped as defaults from empirically testing it.
+
+  Core invariants (NON-NEGOTIABLE — any change must preserve all of these):
+  - CROSS-LANGUAGE PARITY: every behavior change lands in BOTH Python and
+    TypeScript and keeps bench/parity.py green. A feature in one language only
+    is a bug.
+  - SAFE BY DEFAULT: grounding prompt + relevance floor + abstention are ON by
+    default. A change making unsafe behavior the default is rejected.
+  - BYOM: groundedwork NEVER calls a model. No provider SDKs, no API keys, no
+    base_url config. The model call belongs in the user's code.
+  - ZERO RUNTIME DEPENDENCIES: core stays stdlib-only in both languages. New
+    capabilities ship as opt-in extras, never base dependencies.
+  - SMALL SURFACE: add / retrieve / prompt / messages / ask. New public API
+    needs strong justification.
+  - HONESTY: claims are backed by a test or measurement. Limitations are stated
+    plainly (the BM25 paraphrase gap is documented, not hidden).
+
+rules:
+  proposal:
+    - State which capability(ies) the change adds or modifies.
+    - Include a "Cross-language impact" note — does it touch retrieval behavior (must land in BOTH Python and TS) or is it docs/tooling only?
+    - Include a "Invariant check" subsection confirming the change preserves parity, safe-by-default, BYOM, and zero-runtime-dependency.
+    - Add a Non-goals section so scope creep is visible.
+  design:
+    - Document how the change keeps Python and TypeScript behaviorally identical (or why it is language-neutral).
+    - If the change adds a dependency, justify why it is opt-in and how the zero-dependency default is preserved.
+    - Call out any new public API surface explicitly.
+  tasks:
+    - Group by component. Behavior changes must have a task to update BOTH languages and a task to regenerate bench/golden.json.
+    - Each group ends with a validation task (make test green, parity IDENTICAL).
+  spec:
+    - Each requirement subject + MUST/SHALL on the first physical line.
+    - At least one Scenario per requirement with WHEN/THEN.
