@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, height=400, initial-scale=1.0">
+<title>groundedwork - Hero</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    width: 1280px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Background effects */
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(to right, #30363d 1px, transparent 1px),
+      linear-gradient(to bottom, #30363d 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.15;
+    z-index: 1;
+  }
+  .bg-glow-1 {
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(163, 113, 247, 0.15) 0%, transparent 70%);
+    z-index: 1;
+  }
+  .bg-glow-2 {
+    position: absolute;
+    bottom: -50%;
+    right: -10%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(88, 166, 255, 0.15) 0%, transparent 70%);
+    z-index: 1;
+  }
+  
+  /* Content container */
+  .content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  /* Typography */
+  h1 {
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin: 0;
+    background: linear-gradient(135deg, #a371f7, #58a6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  
+  h2 {
+    font-size: 36px;
+    font-weight: 500;
+    color: #f0f6fc;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+  
+  p.sub {
+    font-size: 20px;
+    color: #8b949e;
+    margin: 0;
+    max-width: 860px;
+    line-height: 1.5;
+  }
+  
+  /* Chips */
+  .chips {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 100px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 14px;
+    color: #c9d1d9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  
+  .chip svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .chip-grounded svg { color: #3fb950; }
+  .chip-floor svg { color: #d29922; }
+  .chip-cache svg { color: #58a6ff; }
+  
+</style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  
+  <div class="content">
+    <h1>groundedwork</h1>
+    <h2>Retrieval that knows when it doesn't know.</h2>
+    <p class="sub">A tiny, dependency-free BM25 working-set layer for any LLM. Python + TypeScript. Grounded and abstaining by default.</p>
+    
+    <div class="chips">
+      <div class="chip chip-grounded">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        grounded by default
+      </div>
+      <div class="chip chip-floor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v20"></path>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        relevance floor
+      </div>
+      <div class="chip chip-cache">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        cache-aware
+      </div>
+    </div>
+  </div>
+</body>
+</html>

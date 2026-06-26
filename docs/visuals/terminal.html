@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1000, height=640, initial-scale=1.0">
+<title>groundedwork - Terminal</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 640px;
+    width: 1000px;
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    overflow: hidden;
+  }
+  
+  .terminal-container {
+    width: 900px;
+    height: 520px;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .terminal-header {
+    height: 40px;
+    background-color: #0d1117;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    position: relative;
+  }
+  
+  .dots {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  
+  .dot-red { background-color: #ff5f56; }
+  .dot-yellow { background-color: #ffbd2e; }
+  .dot-green { background-color: #27c93f; }
+  
+  .terminal-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #8b949e;
+    font-size: 13px;
+    font-family: system-ui, sans-serif;
+  }
+  
+  .terminal-body {
+    padding: 24px;
+    flex-grow: 1;
+    color: #c9d1d9;
+    font-size: 15px;
+    line-height: 1.6;
+    position: relative;
+  }
+  
+  .line {
+    margin-bottom: 12px;
+    opacity: 0;
+  }
+  
+  .prompt { color: #a371f7; font-weight: bold; margin-right: 8px; }
+  .keyword { color: #ff7b72; }
+  .string { color: #3fb950; }
+  .boolean-true { color: #3fb950; }
+  .boolean-false { color: #d29922; }
+  .key { color: #58a6ff; }
+  .comment { color: #8b949e; font-style: italic; }
+  .none { color: #8b949e; }
+  
+  .glow-green { text-shadow: 0 0 8px rgba(63, 185, 80, 0.4); }
+  .glow-amber { text-shadow: 0 0 8px rgba(210, 153, 34, 0.4); }
+
+  /* Animation Keyframes */
+  @keyframes typeLine {
+    0% { opacity: 0; width: 0; }
+    1% { opacity: 1; width: 0; }
+    100% { opacity: 1; width: 100%; }
+  }
+  
+  @keyframes showLine {
+    0% { opacity: 0; transform: translateY(5px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeLoop {
+    0% { opacity: 0; }
+    3% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .loop-wrapper {
+    animation: fadeLoop 16s infinite;
+  }
+
+  /* Typed lines */
+  .type-anim {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+  
+  .line-1 { animation: showLine 0.1s forwards 0.5s; }
+  .line-2 { animation: showLine 0.1s forwards 2.0s; }
+  .line-3 { animation: showLine 0.1s forwards 3.5s; }
+  .line-4 { animation: showLine 0.1s forwards 5.5s; }
+  .line-5 { animation: showLine 0.3s forwards 6.5s; }
+  .line-6 { animation: showLine 0.1s forwards 8.5s; }
+  .line-7 { animation: showLine 0.3s forwards 9.5s; }
+  .line-8 { animation: showLine 0.1s forwards 11.5s; }
+  .line-9 { animation: showLine 0.3s forwards 12.5s; }
+
+  /* Output styling */
+  .output {
+    margin-left: 0;
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+  <div class="terminal-container">
+    <div class="terminal-header">
+      <div class="dots">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+      </div>
+      <div class="terminal-title">groundedwork &mdash; live</div>
+    </div>
+    
+    <div class="terminal-body">
+      <div class="loop-wrapper">
+        <div class="line line-1"><span class="prompt">&gt;&gt;&gt;</span> <span class="keyword">from</span> groundedwork <span class="keyword">import</span> GroundedWork</div>
+        
+        <div class="line line-2"><span class="prompt">&gt;&gt;&gt;</span> kb = GroundedWork(prefs=<span class="string">"Pro plan user"</span>)</div>
+        
+        <div class="line line-3"><span class="prompt">&gt;&gt;&gt;</span> kb.add_many(nimbus_docs)   <span class="comment"># 24 coffee-company help docs</span></div>
+        <div style="height: 10px;"></div>
+        
+        <div class="line line-4"><span class="prompt">&gt;&gt;&gt;</span> kb.ask(<span class="string">"How do I get a refund?"</span>)</div>
+        <div class="line line-5 output">{<span class="key">'grounded'</span>: <span class="boolean-true glow-green">True</span>,  <span class="key">'answer'</span>: <span class="string">'Return any unopened bag within 30 days...'</span>, <span class="key">'source'</span>: <span class="string">'returns'</span>}</div>
+        
+        <div class="line line-6"><span class="prompt">&gt;&gt;&gt;</span> kb.ask(<span class="string">"When does it show up at my door?"</span>)     <span class="comment"># a paraphrase</span></div>
+        <div class="line line-7 output">{<span class="key">'grounded'</span>: <span class="boolean-true glow-green">True</span>,  <span class="key">'answer'</span>: <span class="string">'Orders arrive in 3-5 business days...'</span>, <span class="key">'source'</span>: <span class="string">'ship-us'</span>}</div>
+        
+        <div class="line line-8"><span class="prompt">&gt;&gt;&gt;</span> kb.ask(<span class="string">"What's the capital of France?"</span>)          <span class="comment"># not in the docs</span></div>
+        <div class="line line-9 output">{<span class="key">'grounded'</span>: <span class="boolean-false glow-amber">False</span>, <span class="key">'answer'</span>: <span class="string">"I don't have that in my knowledge base, so I won't guess."</span>, <span class="key">'source'</span>: <span class="none">None</span>}</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

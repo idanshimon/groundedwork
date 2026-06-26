@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a capability or improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening: groundedwork is small on purpose, BYOM (it never calls a model), and zero-runtime-dependency. Features that preserve those values are much more likely to land. See [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: The use case, not just the feature.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: If it touches retrieval behavior, remember it must work identically in Python AND TypeScript.
+    validations:
+      required: false
+  - type: checkboxes
+    id: values
+    attributes:
+      label: Does it fit the project values?
+      options:
+        - label: Keeps the zero-runtime-dependency default (new deps are opt-in extras)
+        - label: Keeps BYOM (no provider SDKs / API keys in the package)
+        - label: Safe-by-default behavior is preserved

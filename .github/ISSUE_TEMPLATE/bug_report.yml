@@ -1,0 +1,45 @@
+name: Bug report
+description: Report incorrect behavior (retrieval, grounding, parity, API)
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. For **retrieval-behavior** bugs, the most useful thing you can give us is a minimal corpus + query + expected-vs-actual — that turns straight into a regression test.
+  - type: dropdown
+    id: language
+    attributes:
+      label: Which implementation?
+      options:
+        - Python
+        - TypeScript
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: A few docs, the query, and the call. Paste runnable code if you can.
+      render: python
+      placeholder: |
+        from groundedwork import GroundedWork
+        kb = GroundedWork().add_many([{"id": "a", "title": "...", "body": "..."}])
+        print(kb.ask("..."))
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+      description: What did you expect, and what happened?
+    validations:
+      required: true

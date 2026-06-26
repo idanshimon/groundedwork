@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, height=700, initial-scale=1.0">
+<title>groundedwork - Architecture</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 700px;
+    width: 1200px;
+    overflow: hidden;
+  }
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+  .box { fill: #161b22; stroke: #30363d; stroke-width: 2px; }
+  .box-text { fill: #f0f6fc; font-size: 16px; font-weight: 500; text-anchor: middle; alignment-baseline: middle; }
+  .box-subtext { fill: #8b949e; font-size: 12px; font-family: ui-monospace, monospace; text-anchor: middle; alignment-baseline: middle; }
+  
+  .arrow { stroke: #8b949e; stroke-width: 2px; fill: none; }
+  .arrow-label { fill: #8b949e; font-size: 14px; font-style: italic; text-anchor: middle; }
+  
+  .dashed-box { fill: transparent; stroke: #58a6ff; stroke-width: 2px; stroke-dasharray: 6,4; }
+  
+  /* Colors */
+  .fill-blue { fill: rgba(88, 166, 255, 0.1); stroke: #58a6ff; }
+  .fill-green { fill: rgba(63, 185, 80, 0.1); stroke: #3fb950; }
+  .fill-red { fill: rgba(248, 81, 73, 0.1); stroke: #f85149; }
+  .fill-amber { fill: rgba(210, 153, 34, 0.1); stroke: #d29922; }
+  .fill-violet { fill: rgba(163, 113, 247, 0.1); stroke: #a371f7; }
+  
+  .text-blue { fill: #58a6ff; }
+  .text-green { fill: #3fb950; }
+  .text-red { fill: #f85149; }
+  .text-amber { fill: #d29922; }
+  .text-violet { fill: #a371f7; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8b949e" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3fb950" />
+    </marker>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f85149" />
+    </marker>
+  </defs>
+
+  <!-- Legend -->
+  <g transform="translate(40, 40)">
+    <rect width="180" height="100" rx="8" class="box" />
+    <text x="90" y="25" class="box-text" style="font-size: 14px;">Legend</text>
+    <circle cx="20" cy="50" r="6" fill="#3fb950" />
+    <text x="35" y="54" class="box-subtext" style="text-anchor: start;">Grounded / Safe</text>
+    <circle cx="20" cy="75" r="6" fill="#58a6ff" />
+    <text x="35" y="79" class="box-subtext" style="text-anchor: start;">Cache-aware / Info</text>
+  </g>
+
+  <!-- Column 1: Inputs -->
+  <g transform="translate(50, 200)">
+    <rect width="160" height="60" rx="10" class="box" />
+    <text x="80" y="30" class="box-text">Your Docs</text>
+    <text x="80" y="48" class="box-subtext">24 items</text>
+  </g>
+  <g transform="translate(50, 400)">
+    <rect width="160" height="60" rx="10" class="box" />
+    <text x="80" y="30" class="box-text">User Question</text>
+    <text x="80" y="48" class="box-subtext">"How do I get a refund?"</text>
+  </g>
+
+  <!-- Column 2: Index & Floor -->
+  <g transform="translate(320, 200)">
+    <rect width="160" height="60" rx="10" class="box fill-violet" />
+    <text x="80" y="30" class="box-text text-violet">BM25 Index</text>
+    <text x="80" y="48" class="box-subtext text-violet">(in memory)</text>
+  </g>
+  
+  <g transform="translate(320, 400)">
+    <rect width="160" height="60" rx="10" class="box fill-amber" />
+    <text x="80" y="30" class="box-text text-amber">Relevance Floor</text>
+    <text x="80" y="48" class="box-subtext text-amber">min_score=0.5</text>
+  </g>
+
+  <!-- Column 3: Working Set / Abstain -->
+  <g transform="translate(600, 280)">
+    <rect width="200" height="60" rx="10" class="box fill-green" />
+    <text x="100" y="30" class="box-text text-green">Grounded Working Set</text>
+    <text x="100" y="48" class="box-subtext text-green">top 2-3 docs</text>
+  </g>
+
+  <g transform="translate(600, 520)">
+    <rect width="200" height="60" rx="10" class="box fill-red" />
+    <text x="100" y="30" class="box-text text-red">grounded = false</text>
+    <text x="100" y="48" class="box-subtext text-red">Below floor</text>
+  </g>
+
+  <!-- Column 4: Message Assembly & External Model -->
+  <!-- Top Path (Green / Messages) -->
+  <g transform="translate(860, 250)">
+    <rect width="280" height="120" rx="10" class="box" />
+    <text x="140" y="25" class="box-text">messages()</text>
+    
+    <!-- Cached block -->
+    <rect x="20" y="40" width="240" height="30" rx="4" class="box fill-blue" />
+    <text x="140" y="55" class="box-subtext text-blue">system + prefs (CACHED 🔒)</text>
+    
+    <!-- Volatile block -->
+    <rect x="20" y="75" width="240" height="30" rx="4" class="box" />
+    <text x="140" y="90" class="box-subtext">knowledge LAST | question</text>
+  </g>
+
+  <g transform="translate(860, 100)">
+    <rect width="280" height="80" rx="10" class="dashed-box" />
+    <text x="140" y="40" class="box-text text-blue">Your LLM</text>
+    <text x="140" y="58" class="box-subtext text-blue">Ollama, Azure, Anthropic...</text>
+  </g>
+
+  <!-- Bottom Path (Green / Abstain Output) -->
+  <g transform="translate(860, 520)">
+    <rect width="280" height="60" rx="10" class="box fill-green" />
+    <text x="140" y="30" class="box-text text-green">"I don't have that"</text>
+    <text x="140" y="48" class="box-subtext text-green">(NO model call needed)</text>
+  </g>
+
+  <!-- ARROWS -->
+  <!-- Inputs to Index/Floor -->
+  <path d="M 210 230 L 310 230" class="arrow" marker-end="url(#arrowhead)" />
+  <text x="260" y="220" class="arrow-label">.add_many()</text>
+
+  <path d="M 210 430 L 310 430" class="arrow" marker-end="url(#arrowhead)" />
+  <text x="260" y="420" class="arrow-label">.retrieve()</text>
+  
+  <path d="M 400 260 L 400 390" class="arrow" marker-end="url(#arrowhead)" stroke-dasharray="4,4" />
+  <text x="410" y="325" class="arrow-label" style="text-anchor: start;">scores</text>
+
+  <!-- Floor to Working Set -->
+  <path d="M 480 415 L 530 415 L 530 310 L 590 310" class="arrow" stroke="#3fb950" marker-end="url(#arrowhead-green)" />
+  <text x="540" y="360" class="arrow-label" fill="#3fb950" style="text-anchor: start;">clears floor</text>
+
+  <!-- Floor to Abstain -->
+  <path d="M 480 445 L 530 445 L 530 550 L 590 550" class="arrow" stroke="#f85149" marker-end="url(#arrowhead-red)" />
+  <text x="540" y="495" class="arrow-label" fill="#f85149" style="text-anchor: start;">nothing passes</text>
+
+  <!-- Working Set to Messages -->
+  <path d="M 800 310 L 850 310" class="arrow" marker-end="url(#arrowhead)" />
+  
+  <!-- Messages to LLM -->
+  <path d="M 1000 250 L 1000 190" class="arrow" marker-end="url(#arrowhead)" />
+
+  <!-- Abstain to Output -->
+  <path d="M 800 550 L 850 550" class="arrow" stroke="#3fb950" marker-end="url(#arrowhead-green)" />
+
+</svg>
+</body>
+</html>
