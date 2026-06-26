@@ -21,7 +21,7 @@ classifiers = [
 dependencies = []   # zero runtime dependencies — stdlib only
 
 [project.optional-dependencies]
-dev = ["pytest>=7"]
+dev = ["pytest>=7", "rank-bm25>=0.2"]
 
 [project.urls]
 Homepage = "https://github.com/idanshimon/groundedwork"

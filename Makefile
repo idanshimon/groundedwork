@@ -1,7 +1,7 @@
 # groundedwork — developer tasks
 # `make test` runs everything: both language suites + cross-language parity.
 
-.PHONY: help test test-py test-ts parity golden install clean
+.PHONY: help test test-py test-ts parity golden corpus install clean
 
 help:
 	@echo "groundedwork developer tasks:"
@@ -11,6 +11,7 @@ help:
 	@echo "  make test-ts   typescript unit suite only"
 	@echo "  make parity    cross-language parity check (vs golden.json)"
 	@echo "  make golden    regenerate the parity golden snapshot"
+	@echo "  make corpus    regenerate the large real-corpus fixture"
 	@echo "  make clean     remove build/test artifacts"
 
 install:
@@ -35,6 +36,9 @@ parity:
 
 golden:
 	python bench/parity.py --update
+
+corpus:
+	python bench/gen_corpus.py
 
 clean:
 	rm -rf python/dist python/build python/*.egg-info python/.pytest_cache

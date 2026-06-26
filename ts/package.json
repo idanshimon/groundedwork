@@ -14,7 +14,7 @@
   "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "test": "node --test --experimental-strip-types test/index.test.ts",
+    "test": "node --test --experimental-strip-types 'test/*.test.ts'",
     "prepublishOnly": "npm run build"
   },
   "keywords": ["rag", "retrieval", "bm25", "llm", "context", "grounding", "abstention", "working-set"],
