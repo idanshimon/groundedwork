@@ -12,6 +12,7 @@ help:
 	@echo "  make parity    cross-language parity check (vs golden.json)"
 	@echo "  make golden    regenerate the parity golden snapshot"
 	@echo "  make corpus    regenerate the large real-corpus fixture"
+	@echo "  make play      run the live in-browser playground (localhost:8000)"
 	@echo "  make clean     remove build/test artifacts"
 
 install:
@@ -39,6 +40,11 @@ golden:
 
 corpus:
 	python bench/gen_corpus.py
+
+play:
+	@echo "groundedwork playground → http://localhost:8000  (Ctrl-C to stop)"
+	cd python && pip install -e . >/dev/null 2>&1 || true
+	python playground/server.py
 
 clean:
 	rm -rf python/dist python/build python/*.egg-info python/.pytest_cache

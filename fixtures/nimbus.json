@@ -11,19 +11,19 @@
       "id": "returns",
       "title": "Returns & Refunds",
       "body": "Not happy with your beans? Return any unopened bag within 30 days for a full refund. Opened bags qualify for store credit. Email support to start a refund.",
-      "answer": "You can return any unopened bag within 30 days for a full refund. Opened bags get store credit â just email support to start it."
+      "answer": "You can return any unopened bag within 30 days for a full refund. Opened bags get store credit — just email support to start it."
     },
     {
       "id": "ship-us",
       "title": "US Shipping",
       "body": "Domestic orders arrive in 3 to 5 business days via standard shipping. Orders over forty dollars ship free. Tracking is emailed when your order leaves the roastery.",
-      "answer": "US orders arrive in 3â5 business days. Free shipping over $40, and you'll get tracking by email when it leaves the roastery."
+      "answer": "US orders arrive in 3–5 business days. Free shipping over $40, and you'll get tracking by email when it leaves the roastery."
     },
     {
       "id": "ship-intl",
       "title": "International Shipping",
       "body": "We ship worldwide. International delivery takes 7 to 14 business days. Customs fees are the customer's responsibility and are not included at checkout.",
-      "answer": "We ship worldwide â international delivery is 7â14 business days. Heads up: customs fees aren't included and are paid by you."
+      "answer": "We ship worldwide — international delivery is 7–14 business days. Heads up: customs fees aren't included and are paid by you."
     },
     {
       "id": "tiers",
@@ -41,13 +41,13 @@
       "id": "cancel",
       "title": "Cancelling",
       "body": "Cancel anytime with no fee from account settings. Cancellation takes effect at the end of your current billing cycle. You keep access until then.",
-      "answer": "Cancel anytime, no fee, from account settings. It takes effect at the end of your current billing cycle â you keep access until then."
+      "answer": "Cancel anytime, no fee, from account settings. It takes effect at the end of your current billing cycle — you keep access until then."
     },
     {
       "id": "ethiopia",
       "title": "Ethiopia Yirgacheffe",
       "body": "Our Ethiopia Yirgacheffe is a bright, floral light roast with notes of jasmine, bergamot, and lemon. Grown at high altitude and washed processed.",
-      "answer": "The Ethiopia Yirgacheffe is a bright, floral light roast â jasmine, bergamot, and lemon. High-altitude, washed process."
+      "answer": "The Ethiopia Yirgacheffe is a bright, floral light roast — jasmine, bergamot, and lemon. High-altitude, washed process."
     },
     {
       "id": "colombia",
@@ -59,7 +59,7 @@
       "id": "sumatra",
       "title": "Sumatra Mandheling",
       "body": "Sumatra Mandheling is a bold, earthy dark roast with cedar, dark chocolate, and low acidity. Heavy body, great for espresso and French press.",
-      "answer": "Sumatra Mandheling is a bold, earthy dark roast â cedar, dark chocolate, low acidity, heavy body. Excellent in espresso or French press."
+      "answer": "Sumatra Mandheling is a bold, earthy dark roast — cedar, dark chocolate, low acidity, heavy body. Excellent in espresso or French press."
     },
     {
       "id": "roast",
@@ -83,19 +83,19 @@
       "id": "pourover",
       "title": "Pour-Over Guide",
       "body": "For pour over use a medium grind, rinse the filter, bloom with twice the coffee weight in water for thirty seconds, then pour in slow spirals.",
-      "answer": "Pour-over: medium grind, rinse the filter, bloom 30 seconds with 2Ã the coffee weight in water, then pour in slow spirals."
+      "answer": "Pour-over: medium grind, rinse the filter, bloom 30 seconds with 2× the coffee weight in water, then pour in slow spirals."
     },
     {
       "id": "espresso",
       "title": "Espresso Guide",
       "body": "For espresso use a fine grind and an eighteen gram dose, aim for a twenty five to thirty second extraction yielding about thirty six grams in the cup.",
-      "answer": "Espresso: fine grind, 18 g dose, aim for a 25â30 second shot pulling about 36 g out. Adjust grind to hit the time."
+      "answer": "Espresso: fine grind, 18 g dose, aim for a 25–30 second shot pulling about 36 g out. Adjust grind to hit the time."
     },
     {
       "id": "decaf",
       "title": "Decaf Options",
       "body": "Every coffee is available decaffeinated using the Swiss Water process, which removes caffeine without chemical solvents while keeping flavor intact.",
-      "answer": "Yes â every coffee comes in decaf, made with the chemical-free Swiss Water process that keeps the flavor intact."
+      "answer": "Yes — every coffee comes in decaf, made with the chemical-free Swiss Water process that keeps the flavor intact."
     },
     {
       "id": "gift",
@@ -107,13 +107,13 @@
       "id": "referral",
       "title": "Referral Program",
       "body": "Refer a friend and you both get a free bag. Share your referral link from your dashboard. The reward applies after your friend's first order ships.",
-      "answer": "Refer a friend and you both get a free bag. Grab your link in the dashboard â the reward lands after their first order ships."
+      "answer": "Refer a friend and you both get a free bag. Grab your link in the dashboard — the reward lands after their first order ships."
     },
     {
       "id": "storage",
       "title": "Storing Your Beans",
       "body": "Store beans in an airtight container away from light, heat, and moisture. Do not refrigerate. Use within four weeks of the roast date for peak flavor.",
-      "answer": "Keep beans airtight, away from light, heat, and moisture â don't refrigerate. Best within 4 weeks of the roast date."
+      "answer": "Keep beans airtight, away from light, heat, and moisture — don't refrigerate. Best within 4 weeks of the roast date."
     },
     {
       "id": "payment",
@@ -149,7 +149,7 @@
       "id": "support",
       "title": "Contact Support",
       "body": "Reach support by email any day from seven in the morning to nine at night Eastern, or by live chat on weekdays. Typical reply time is under two hours.",
-      "answer": "Email support 7amâ9pm ET any day, or live chat on weekdays. We usually reply in under 2 hours."
+      "answer": "Email support 7am–9pm ET any day, or live chat on weekdays. We usually reply in under 2 hours."
     }
   ],
   "cases": [

@@ -36,6 +36,18 @@ kb.ask("capital of France?")          # {'grounded': False, 'answer': "I don't h
 ```
 
 
+## Try it live (in your browser)
+
+A zero-dependency playground runs the **real engine** locally — no mockups, no hardcoded numbers. You type a question and watch the actual pipeline: tokenized terms → real BM25 scores vs the relevance floor → the grounded/abstain decision → the exact cache-aware prompt your model would receive.
+
+```bash
+make play          # then open http://localhost:8000
+# or:  python playground/server.py
+```
+
+It imports the installed `groundedwork` package and calls the same `retrieve` / `prompt` / `messages` / `ask` methods the tests use. Five guided scenarios walk you through a grounded answer, an honest abstention, the keyword paraphrase gap, and the cache-aware prompt assembly. Expand **“show what happened”** on any answer to see every stage.
+
+
 ## What makes it different
 
 Built on the ideas of **[ContextForge](https://github.com/Betanu701/ContextForge)** by Derek Thomas. After a week of empirically testing that SDK (8 models, 216 trials), we shipped the lessons as **defaults**:
@@ -67,6 +79,7 @@ groundedwork/
 ├── ts/             npm package — TypeScript mirror
 ├── fixtures/       shared cross-language test fixtures (the parity contract)
 ├── bench/          cross-language parity harness (emitters + golden snapshot)
+├── playground/     zero-dependency live demo server (the real engine)
 ├── docs/           ARCHITECTURE.md — algorithm, design, interface contract
 ├── AGENTS.md       machine-oriented guide for AI agents using/extending this
 ├── Makefile        `make test` runs everything (both suites + parity)
