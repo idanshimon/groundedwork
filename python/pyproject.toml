@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "groundedwork"
+version = "0.1.0"
+description = "Retrieval that knows when it doesn't know. A tiny, dependency-free BM25 working-set layer for giving an LLM a knowledge base bigger than its context window — grounded and abstaining by default."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "Idan Shimon" }]
+keywords = ["rag", "retrieval", "bm25", "llm", "context", "grounding", "abstention", "working-set"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []   # zero runtime dependencies — stdlib only
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/idanshimon/groundedwork"
+Source = "https://github.com/idanshimon/groundedwork"
+
+[tool.hatch.build.targets.wheel]
+packages = ["groundedwork"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

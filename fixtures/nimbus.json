@@ -1,0 +1,204 @@
+{
+  "_comment": "Shared cross-language test fixture for groundedwork. Python and TS suites both run this so behavior is provably identical. Synthetic 'Nimbus' coffee company corpus.",
+  "config": {
+    "min_score": 2.0,
+    "top_k": 3,
+    "k1": 1.5,
+    "b": 0.75
+  },
+  "corpus": [
+    {
+      "id": "returns",
+      "title": "Returns & Refunds",
+      "body": "Not happy with your beans? Return any unopened bag within 30 days for a full refund. Opened bags qualify for store credit. Email support to start a refund.",
+      "answer": "You can return any unopened bag within 30 days for a full refund. Opened bags get store credit â just email support to start it."
+    },
+    {
+      "id": "ship-us",
+      "title": "US Shipping",
+      "body": "Domestic orders arrive in 3 to 5 business days via standard shipping. Orders over forty dollars ship free. Tracking is emailed when your order leaves the roastery.",
+      "answer": "US orders arrive in 3â5 business days. Free shipping over $40, and you'll get tracking by email when it leaves the roastery."
+    },
+    {
+      "id": "ship-intl",
+      "title": "International Shipping",
+      "body": "We ship worldwide. International delivery takes 7 to 14 business days. Customs fees are the customer's responsibility and are not included at checkout.",
+      "answer": "We ship worldwide â international delivery is 7â14 business days. Heads up: customs fees aren't included and are paid by you."
+    },
+    {
+      "id": "tiers",
+      "title": "Subscription Plans",
+      "body": "Three subscription tiers: Starter is one bag monthly, Pro is two bags monthly, Connoisseur is four bags plus early access to rare lots. Switch tiers anytime.",
+      "answer": "Three plans: Starter (1 bag/mo), Pro (2 bags/mo), and Connoisseur (4 bags + early access to rare lots). You can switch anytime."
+    },
+    {
+      "id": "pause",
+      "title": "Pausing Your Subscription",
+      "body": "Need a break? Pause your subscription for up to three months from your account dashboard. Billing and shipments stop while paused and resume automatically.",
+      "answer": "You can pause for up to 3 months right from your dashboard. Billing and shipments stop while paused, then resume automatically."
+    },
+    {
+      "id": "cancel",
+      "title": "Cancelling",
+      "body": "Cancel anytime with no fee from account settings. Cancellation takes effect at the end of your current billing cycle. You keep access until then.",
+      "answer": "Cancel anytime, no fee, from account settings. It takes effect at the end of your current billing cycle â you keep access until then."
+    },
+    {
+      "id": "ethiopia",
+      "title": "Ethiopia Yirgacheffe",
+      "body": "Our Ethiopia Yirgacheffe is a bright, floral light roast with notes of jasmine, bergamot, and lemon. Grown at high altitude and washed processed.",
+      "answer": "The Ethiopia Yirgacheffe is a bright, floral light roast â jasmine, bergamot, and lemon. High-altitude, washed process."
+    },
+    {
+      "id": "colombia",
+      "title": "Colombia Supremo",
+      "body": "Colombia Supremo is a balanced medium roast with caramel sweetness, milk chocolate, and a soft red-apple acidity. A crowd-pleasing everyday cup.",
+      "answer": "Colombia Supremo is a balanced medium roast: caramel, milk chocolate, soft red-apple acidity. A great everyday cup."
+    },
+    {
+      "id": "sumatra",
+      "title": "Sumatra Mandheling",
+      "body": "Sumatra Mandheling is a bold, earthy dark roast with cedar, dark chocolate, and low acidity. Heavy body, great for espresso and French press.",
+      "answer": "Sumatra Mandheling is a bold, earthy dark roast â cedar, dark chocolate, low acidity, heavy body. Excellent in espresso or French press."
+    },
+    {
+      "id": "roast",
+      "title": "Roast Levels",
+      "body": "Light roast keeps origin flavor and acidity. Medium balances sweetness and body. Dark roast is bold and smoky. Each bag is labeled with its roast level.",
+      "answer": "Light = bright and acidic, keeps origin character. Medium = balanced sweetness and body. Dark = bold and smoky. Every bag is labeled."
+    },
+    {
+      "id": "grind",
+      "title": "Grind Sizes",
+      "body": "Coarse grind suits French press, medium suits drip and pour over, fine suits espresso. We grind to order or ship whole bean for maximum freshness.",
+      "answer": "Coarse for French press, medium for drip/pour-over, fine for espresso. We grind to order, or ship whole bean for max freshness."
+    },
+    {
+      "id": "frenchpress",
+      "title": "French Press Guide",
+      "body": "For French press use a coarse grind, a one to fifteen coffee to water ratio, water just off the boil, and a four minute steep before pressing slowly.",
+      "answer": "French press: coarse grind, 1:15 coffee-to-water, water just off the boil, steep 4 minutes, then press slowly."
+    },
+    {
+      "id": "pourover",
+      "title": "Pour-Over Guide",
+      "body": "For pour over use a medium grind, rinse the filter, bloom with twice the coffee weight in water for thirty seconds, then pour in slow spirals.",
+      "answer": "Pour-over: medium grind, rinse the filter, bloom 30 seconds with 2Ã the coffee weight in water, then pour in slow spirals."
+    },
+    {
+      "id": "espresso",
+      "title": "Espresso Guide",
+      "body": "For espresso use a fine grind and an eighteen gram dose, aim for a twenty five to thirty second extraction yielding about thirty six grams in the cup.",
+      "answer": "Espresso: fine grind, 18 g dose, aim for a 25â30 second shot pulling about 36 g out. Adjust grind to hit the time."
+    },
+    {
+      "id": "decaf",
+      "title": "Decaf Options",
+      "body": "Every coffee is available decaffeinated using the Swiss Water process, which removes caffeine without chemical solvents while keeping flavor intact.",
+      "answer": "Yes â every coffee comes in decaf, made with the chemical-free Swiss Water process that keeps the flavor intact."
+    },
+    {
+      "id": "gift",
+      "title": "Gift Subscriptions",
+      "body": "Gift subscriptions come in three, six, or twelve month prepaid options. The recipient picks their own coffees and there is no auto-renewal on gifts.",
+      "answer": "Gift subscriptions come prepaid in 3, 6, or 12 months. The recipient chooses their own coffees, and gifts never auto-renew."
+    },
+    {
+      "id": "referral",
+      "title": "Referral Program",
+      "body": "Refer a friend and you both get a free bag. Share your referral link from your dashboard. The reward applies after your friend's first order ships.",
+      "answer": "Refer a friend and you both get a free bag. Grab your link in the dashboard â the reward lands after their first order ships."
+    },
+    {
+      "id": "storage",
+      "title": "Storing Your Beans",
+      "body": "Store beans in an airtight container away from light, heat, and moisture. Do not refrigerate. Use within four weeks of the roast date for peak flavor.",
+      "answer": "Keep beans airtight, away from light, heat, and moisture â don't refrigerate. Best within 4 weeks of the roast date."
+    },
+    {
+      "id": "payment",
+      "title": "Payment Methods",
+      "body": "We accept all major credit cards, Apple Pay, Google Pay, and PayPal. Payment is processed securely and your card is charged on your billing date.",
+      "answer": "We take all major cards, Apple Pay, Google Pay, and PayPal. Everything's processed securely and charged on your billing date."
+    },
+    {
+      "id": "billing",
+      "title": "Billing Cycle",
+      "body": "Subscriptions bill on the same day each month, the date of your first order. You receive an email receipt and a reminder three days before each charge.",
+      "answer": "You're billed monthly on the date of your first order. You'll get a receipt by email plus a reminder 3 days before each charge."
+    },
+    {
+      "id": "bulk",
+      "title": "Office & Bulk Orders",
+      "body": "Office and bulk orders over ten bags get volume pricing and a dedicated account manager. Contact our sales team for a custom quote and invoicing.",
+      "answer": "Bulk and office orders over 10 bags get volume pricing and a dedicated account manager. Contact sales for a custom quote."
+    },
+    {
+      "id": "sustain",
+      "title": "Sustainability",
+      "body": "We buy direct trade, pay above fair-trade prices, and ship in compostable bags. A portion of every subscription funds reforestation at origin farms.",
+      "answer": "We're direct-trade, pay above fair-trade, and ship in compostable bags. Part of every subscription funds reforestation at origin."
+    },
+    {
+      "id": "loyalty",
+      "title": "Loyalty Points",
+      "body": "Earn one point per dollar spent. One hundred points equals a free bag. Points never expire and stack with referral rewards. Track them in your dashboard.",
+      "answer": "You earn 1 point per $1; 100 points = a free bag. Points never expire and stack with referral rewards. Track them in your dashboard."
+    },
+    {
+      "id": "support",
+      "title": "Contact Support",
+      "body": "Reach support by email any day from seven in the morning to nine at night Eastern, or by live chat on weekdays. Typical reply time is under two hours.",
+      "answer": "Email support 7amâ9pm ET any day, or live chat on weekdays. We usually reply in under 2 hours."
+    }
+  ],
+  "cases": [
+    {
+      "query": "How do I get a refund?",
+      "expect_top": "returns",
+      "grounded": true
+    },
+    {
+      "query": "When will my order arrive?",
+      "expect_top": "ship-us",
+      "grounded": true
+    },
+    {
+      "query": "What subscription plans do you have?",
+      "expect_top": "tiers",
+      "grounded": true
+    },
+    {
+      "query": "Tell me about your Ethiopia coffee",
+      "expect_top": "ethiopia",
+      "grounded": true
+    },
+    {
+      "query": "How do I make a pour over?",
+      "expect_top": "pourover",
+      "grounded": true
+    },
+    {
+      "query": "Can I pause my subscription?",
+      "expect_top": "pause",
+      "grounded": true
+    },
+    {
+      "query": "Do you have decaf?",
+      "expect_top": "decaf",
+      "grounded": true
+    },
+    {
+      "query": "When does it show up at my door?",
+      "expect_top": "pause",
+      "grounded": true,
+      "note": "paraphrase FAILURE: 'show up at my door' shares no real words with the shipping doc ('arrive in 3-5 days'), but the stopword-ish 'up' coincidentally matches 'Pausing' — keyword retrieval returns a confidently-WRONG neighbor. This is the paraphrase wall; only embeddings (v0.2) fix it."
+    },
+    {
+      "query": "xyzzy quantum platypus",
+      "expect_top": null,
+      "grounded": false,
+      "note": "nonsense, nothing clears the floor"
+    }
+  ]
+}
