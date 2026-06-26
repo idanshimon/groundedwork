@@ -22,7 +22,7 @@
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.4.0",
-    "@types/node": "^20.0.0"
+    "@types/node": "^22.0.0"
   },
   "engines": {
     "node": ">=18"
