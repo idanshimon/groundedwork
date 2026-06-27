@@ -10,6 +10,14 @@ An LLM has a fixed context window. A knowledge base does not. Pasting every docu
 
 It is a *retrieval and prompt-assembly* layer. It deliberately does **not** call any model (see §6, Non-goals).
 
+### The whole flow at a glance
+
+<p align="center">
+  <img src="visuals/how-it-works.png" alt="groundedwork flow: documents add() into a BM25 index; a user question is scored and ranked; the relevance floor decides — clears it → a grounded working set becomes a cache-aware prompt for your own model (BYOM), nothing clears it → abstain with no model call. An opt-in hybrid embedder fuses BM25 with dense similarity to close the paraphrase gap." width="92%">
+</p>
+
+> Editable source: [`visuals/how-it-works.excalidraw`](visuals/how-it-works.excalidraw) — drag it onto [excalidraw.com](https://excalidraw.com) to view or remix.
+
 ---
 
 ## 2. The algorithm: BM25 over a working set
