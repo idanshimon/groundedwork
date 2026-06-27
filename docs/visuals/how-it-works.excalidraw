@@ -4,6 +4,18 @@
   "source": "hermes-agent",
   "elements": [
     {
+      "type": "rectangle",
+      "id": "darkbg",
+      "x": -4000,
+      "y": -3000,
+      "width": 10000,
+      "height": 7500,
+      "backgroundColor": "#1e1e2e",
+      "fillStyle": "solid",
+      "strokeColor": "transparent",
+      "strokeWidth": 0
+    },
+    {
       "type": "text",
       "id": "title",
       "x": 360,
@@ -11,7 +23,7 @@
       "text": "How groundedwork works",
       "fontSize": 30,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "originalText": "How groundedwork works",
       "autoResize": true
     },
@@ -23,7 +35,7 @@
       "text": "Retrieval that knows when it doesn't know  -  BYOM, zero dependencies",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#757575",
+      "strokeColor": "#c8c8c8",
       "originalText": "Retrieval that knows when it doesn't know  -  BYOM, zero dependencies",
       "autoResize": true
     },
@@ -37,9 +49,9 @@
       "roundness": {
         "type": 3
       },
-      "backgroundColor": "#c3fae8",
+      "backgroundColor": "#1a4d4d",
       "fillStyle": "solid",
-      "strokeColor": "#0c8599",
+      "strokeColor": "#2dd4bf",
       "boundElements": [
         {
           "id": "t_docs",
@@ -57,7 +69,7 @@
       "text": "Your documents\n(KB > context window)",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "docs",
@@ -74,9 +86,9 @@
       "roundness": {
         "type": 3
       },
-      "backgroundColor": "#a5d8ff",
+      "backgroundColor": "#1e3a5f",
       "fillStyle": "solid",
-      "strokeColor": "#1971c2",
+      "strokeColor": "#4a9eed",
       "boundElements": [
         {
           "id": "t_index",
@@ -94,7 +106,7 @@
       "text": "BM25 index\n(in-memory, stdlib)",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "index",
@@ -119,7 +131,7 @@
         ]
       ],
       "endArrowhead": "arrow",
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#c8c8c8",
       "startBinding": {
         "elementId": "docs",
         "fixedPoint": [
@@ -151,7 +163,7 @@
       "text": "add()",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#757575",
+      "strokeColor": "#c8c8c8",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "a_docs_index",
@@ -168,9 +180,9 @@
       "roundness": {
         "type": 3
       },
-      "backgroundColor": "#a5d8ff",
+      "backgroundColor": "#1e3a5f",
       "fillStyle": "solid",
-      "strokeColor": "#1971c2",
+      "strokeColor": "#4a9eed",
       "boundElements": [
         {
           "id": "t_query",
@@ -188,7 +200,7 @@
       "text": "User question",
       "fontSize": 18,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "query",
@@ -205,9 +217,9 @@
       "roundness": {
         "type": 3
       },
-      "backgroundColor": "#d0bfff",
+      "backgroundColor": "#2d1b69",
       "fillStyle": "solid",
-      "strokeColor": "#6741d9",
+      "strokeColor": "#8b5cf6",
       "boundElements": [
         {
           "id": "t_score",
@@ -225,7 +237,7 @@
       "text": "Score & rank\nvs the corpus",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "score",
@@ -250,7 +262,7 @@
         ]
       ],
       "endArrowhead": "arrow",
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#c8c8c8",
       "startBinding": {
         "elementId": "query",
         "fixedPoint": [
@@ -284,7 +296,7 @@
         ]
       ],
       "endArrowhead": "arrow",
-      "strokeColor": "#1971c2",
+      "strokeColor": "#4a9eed",
       "startBinding": {
         "elementId": "index",
         "fixedPoint": [
@@ -307,9 +319,9 @@
       "y": 450,
       "width": 200,
       "height": 120,
-      "backgroundColor": "#fff3bf",
+      "backgroundColor": "#5c3d1a",
       "fillStyle": "solid",
-      "strokeColor": "#f08c00",
+      "strokeColor": "#f59e0b",
       "boundElements": [
         {
           "id": "t_floor",
@@ -327,7 +339,7 @@
       "text": "Clears the\nrelevance floor?",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "floor",
@@ -352,7 +364,7 @@
         ]
       ],
       "endArrowhead": "arrow",
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#c8c8c8",
       "startBinding": {
         "elementId": "score",
         "fixedPoint": [
@@ -378,9 +390,9 @@
       "roundness": {
         "type": 3
       },
-      "backgroundColor": "#b2f2bb",
+      "backgroundColor": "#1a4d2e",
       "fillStyle": "solid",
-      "strokeColor": "#2f9e44",
+      "strokeColor": "#22c55e",
       "boundElements": [
         {
           "id": "t_grounded",
@@ -398,7 +410,7 @@
       "text": "GROUNDED\nWorking set -> cache-aware\nprompt for your model",
       "fontSize": 15,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "grounded",
@@ -423,7 +435,7 @@
         ]
       ],
       "endArrowhead": "arrow",
-      "strokeColor": "#2f9e44",
+      "strokeColor": "#22c55e",
       "startBinding": {
         "elementId": "floor",
         "fixedPoint": [
@@ -455,7 +467,7 @@
       "text": "yes",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#2f9e44",
+      "strokeColor": "#22c55e",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "a_floor_grounded",
@@ -472,9 +484,9 @@
       "roundness": {
         "type": 3
       },
-      "backgroundColor": "#ffc9c9",
+      "backgroundColor": "#5c1a1a",
       "fillStyle": "solid",
-      "strokeColor": "#e03131",
+      "strokeColor": "#ef4444",
       "boundElements": [
         {
           "id": "t_abstain",
@@ -492,7 +504,7 @@
       "text": "ABSTAIN\ngrounded=false, no guess,\nno model call",
       "fontSize": 15,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "abstain",
@@ -517,7 +529,7 @@
         ]
       ],
       "endArrowhead": "arrow",
-      "strokeColor": "#e03131",
+      "strokeColor": "#ef4444",
       "startBinding": {
         "elementId": "floor",
         "fixedPoint": [
@@ -549,7 +561,7 @@
       "text": "nothing",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#e03131",
+      "strokeColor": "#ef4444",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "a_floor_abstain",
@@ -566,9 +578,9 @@
       "roundness": {
         "type": 3
       },
-      "backgroundColor": "#ffd8a8",
+      "backgroundColor": "#5c3d1a",
       "fillStyle": "solid",
-      "strokeColor": "#e8590c",
+      "strokeColor": "#f59e0b",
       "strokeStyle": "dashed",
       "boundElements": [
         {
@@ -587,7 +599,7 @@
       "text": "YOUR model\n(local / Azure / OpenAI)",
       "fontSize": 15,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "model",
@@ -612,7 +624,7 @@
         ]
       ],
       "endArrowhead": "arrow",
-      "strokeColor": "#e8590c",
+      "strokeColor": "#f59e0b",
       "startBinding": {
         "elementId": "grounded",
         "fixedPoint": [
@@ -644,7 +656,7 @@
       "text": "you call it",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#757575",
+      "strokeColor": "#c8c8c8",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "a_grounded_model",
@@ -661,9 +673,9 @@
       "roundness": {
         "type": 3
       },
-      "backgroundColor": "#d0bfff",
+      "backgroundColor": "#2d1b69",
       "fillStyle": "solid",
-      "strokeColor": "#6741d9",
+      "strokeColor": "#8b5cf6",
       "strokeStyle": "dashed",
       "boundElements": [
         {
@@ -682,7 +694,7 @@
       "text": "OPT-IN: hybrid\nadd an embedder ->\nfuse BM25 + dense (RRF)\ncloses paraphrase gap",
       "fontSize": 14,
       "fontFamily": 1,
-      "strokeColor": "#1e1e1e",
+      "strokeColor": "#e5e5e5",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "hybrid",
@@ -707,7 +719,7 @@
         ]
       ],
       "endArrowhead": "arrow",
-      "strokeColor": "#6741d9",
+      "strokeColor": "#8b5cf6",
       "strokeStyle": "dashed",
       "startBinding": {
         "elementId": "hybrid",
@@ -732,12 +744,12 @@
       "text": "Default = pure BM25, zero deps.\nHybrid is optional and never\ncalls a generation model (BYOM).",
       "fontSize": 16,
       "fontFamily": 1,
-      "strokeColor": "#757575",
+      "strokeColor": "#c8c8c8",
       "originalText": "Default = pure BM25, zero deps.\nHybrid is optional and never\ncalls a generation model (BYOM).",
       "autoResize": true
     }
   ],
   "appState": {
-    "viewBackgroundColor": "#ffffff"
+    "viewBackgroundColor": "#1e1e2e"
   }
 }
