@@ -3,57 +3,739 @@
   "version": 2,
   "source": "hermes-agent",
   "elements": [
-    { "type": "text", "id": "title", "x": 360, "y": 30, "text": "How groundedwork works", "fontSize": 30, "fontFamily": 1, "strokeColor": "#1e1e1e", "originalText": "How groundedwork works", "autoResize": true },
-    { "type": "text", "id": "subtitle", "x": 330, "y": 72, "text": "Retrieval that knows when it doesn't know  -  BYOM, zero dependencies", "fontSize": 16, "fontFamily": 1, "strokeColor": "#757575", "originalText": "Retrieval that knows when it doesn't know  -  BYOM, zero dependencies", "autoResize": true },
-
-    { "type": "rectangle", "id": "docs", "x": 60, "y": 150, "width": 180, "height": 90, "roundness": { "type": 3 }, "backgroundColor": "#c3fae8", "fillStyle": "solid", "strokeColor": "#0c8599", "boundElements": [{ "id": "t_docs", "type": "text" }] },
-    { "type": "text", "id": "t_docs", "x": 70, "y": 175, "width": 160, "height": 40, "text": "Your documents\n(KB > context window)", "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "docs", "originalText": "Your documents\n(KB > context window)", "autoResize": true },
-
-    { "type": "rectangle", "id": "index", "x": 60, "y": 300, "width": 180, "height": 90, "roundness": { "type": 3 }, "backgroundColor": "#a5d8ff", "fillStyle": "solid", "strokeColor": "#1971c2", "boundElements": [{ "id": "t_index", "type": "text" }] },
-    { "type": "text", "id": "t_index", "x": 70, "y": 325, "width": 160, "height": 40, "text": "BM25 index\n(in-memory, stdlib)", "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "index", "originalText": "BM25 index\n(in-memory, stdlib)", "autoResize": true },
-
-    { "type": "arrow", "id": "a_docs_index", "x": 150, "y": 244, "width": 0, "height": 52, "points": [[0,0],[0,52]], "endArrowhead": "arrow", "strokeColor": "#1e1e1e", "startBinding": { "elementId": "docs", "fixedPoint": [0.5, 1] }, "endBinding": { "elementId": "index", "fixedPoint": [0.5, 0] }, "boundElements": [{ "id": "t_aindex", "type": "text" }] },
-    { "type": "text", "id": "t_aindex", "x": 158, "y": 258, "width": 90, "height": 20, "text": "add()", "fontSize": 14, "fontFamily": 1, "strokeColor": "#757575", "textAlign": "center", "verticalAlign": "middle", "containerId": "a_docs_index", "originalText": "add()", "autoResize": true },
-
-    { "type": "rectangle", "id": "query", "x": 360, "y": 150, "width": 180, "height": 90, "roundness": { "type": 3 }, "backgroundColor": "#a5d8ff", "fillStyle": "solid", "strokeColor": "#1971c2", "boundElements": [{ "id": "t_query", "type": "text" }] },
-    { "type": "text", "id": "t_query", "x": 370, "y": 175, "width": 160, "height": 40, "text": "User question", "fontSize": 18, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "query", "originalText": "User question", "autoResize": true },
-
-    { "type": "rectangle", "id": "score", "x": 360, "y": 300, "width": 180, "height": 90, "roundness": { "type": 3 }, "backgroundColor": "#d0bfff", "fillStyle": "solid", "strokeColor": "#6741d9", "boundElements": [{ "id": "t_score", "type": "text" }] },
-    { "type": "text", "id": "t_score", "x": 370, "y": 320, "width": 160, "height": 50, "text": "Score & rank\nvs the corpus", "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "score", "originalText": "Score & rank\nvs the corpus", "autoResize": true },
-
-    { "type": "arrow", "id": "a_query_score", "x": 450, "y": 244, "width": 0, "height": 52, "points": [[0,0],[0,52]], "endArrowhead": "arrow", "strokeColor": "#1e1e1e", "startBinding": { "elementId": "query", "fixedPoint": [0.5, 1] }, "endBinding": { "elementId": "score", "fixedPoint": [0.5, 0] } },
-
-    { "type": "arrow", "id": "a_index_score", "x": 244, "y": 345, "width": 112, "height": 0, "points": [[0,0],[112,0]], "endArrowhead": "arrow", "strokeColor": "#1971c2", "startBinding": { "elementId": "index", "fixedPoint": [1, 0.5] }, "endBinding": { "elementId": "score", "fixedPoint": [0, 0.5] } },
-
-    { "type": "diamond", "id": "floor", "x": 350, "y": 450, "width": 200, "height": 120, "backgroundColor": "#fff3bf", "fillStyle": "solid", "strokeColor": "#f08c00", "boundElements": [{ "id": "t_floor", "type": "text" }] },
-    { "type": "text", "id": "t_floor", "x": 365, "y": 490, "width": 170, "height": 40, "text": "Clears the\nrelevance floor?", "fontSize": 16, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "floor", "originalText": "Clears the\nrelevance floor?", "autoResize": true },
-
-    { "type": "arrow", "id": "a_score_floor", "x": 450, "y": 394, "width": 0, "height": 52, "points": [[0,0],[0,52]], "endArrowhead": "arrow", "strokeColor": "#1e1e1e", "startBinding": { "elementId": "score", "fixedPoint": [0.5, 1] }, "endBinding": { "elementId": "floor", "fixedPoint": [0.5, 0] } },
-
-    { "type": "rectangle", "id": "grounded", "x": 660, "y": 455, "width": 200, "height": 110, "roundness": { "type": 3 }, "backgroundColor": "#b2f2bb", "fillStyle": "solid", "strokeColor": "#2f9e44", "boundElements": [{ "id": "t_grounded", "type": "text" }] },
-    { "type": "text", "id": "t_grounded", "x": 670, "y": 480, "width": 180, "height": 60, "text": "GROUNDED\nWorking set -> cache-aware\nprompt for your model", "fontSize": 15, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "grounded", "originalText": "GROUNDED\nWorking set -> cache-aware\nprompt for your model", "autoResize": true },
-
-    { "type": "arrow", "id": "a_floor_grounded", "x": 550, "y": 510, "width": 110, "height": 0, "points": [[0,0],[110,0]], "endArrowhead": "arrow", "strokeColor": "#2f9e44", "startBinding": { "elementId": "floor", "fixedPoint": [1, 0.5] }, "endBinding": { "elementId": "grounded", "fixedPoint": [0, 0.5] }, "boundElements": [{ "id": "t_yes", "type": "text" }] },
-    { "type": "text", "id": "t_yes", "x": 585, "y": 488, "width": 40, "height": 20, "text": "yes", "fontSize": 16, "fontFamily": 1, "strokeColor": "#2f9e44", "textAlign": "center", "verticalAlign": "middle", "containerId": "a_floor_grounded", "originalText": "yes", "autoResize": true },
-
-    { "type": "rectangle", "id": "abstain", "x": 350, "y": 660, "width": 200, "height": 100, "roundness": { "type": 3 }, "backgroundColor": "#ffc9c9", "fillStyle": "solid", "strokeColor": "#e03131", "boundElements": [{ "id": "t_abstain", "type": "text" }] },
-    { "type": "text", "id": "t_abstain", "x": 360, "y": 685, "width": 180, "height": 50, "text": "ABSTAIN\ngrounded=false, no guess,\nno model call", "fontSize": 15, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "abstain", "originalText": "ABSTAIN\ngrounded=false, no guess,\nno model call", "autoResize": true },
-
-    { "type": "arrow", "id": "a_floor_abstain", "x": 450, "y": 570, "width": 0, "height": 90, "points": [[0,0],[0,90]], "endArrowhead": "arrow", "strokeColor": "#e03131", "startBinding": { "elementId": "floor", "fixedPoint": [0.5, 1] }, "endBinding": { "elementId": "abstain", "fixedPoint": [0.5, 0] }, "boundElements": [{ "id": "t_no", "type": "text" }] },
-    { "type": "text", "id": "t_no", "x": 458, "y": 605, "width": 60, "height": 20, "text": "nothing", "fontSize": 16, "fontFamily": 1, "strokeColor": "#e03131", "textAlign": "center", "verticalAlign": "middle", "containerId": "a_floor_abstain", "originalText": "nothing", "autoResize": true },
-
-    { "type": "rectangle", "id": "model", "x": 660, "y": 640, "width": 200, "height": 90, "roundness": { "type": 3 }, "backgroundColor": "#ffd8a8", "fillStyle": "solid", "strokeColor": "#e8590c", "strokeStyle": "dashed", "boundElements": [{ "id": "t_model", "type": "text" }] },
-    { "type": "text", "id": "t_model", "x": 670, "y": 665, "width": 180, "height": 40, "text": "YOUR model\n(local / Azure / OpenAI)", "fontSize": 15, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "model", "originalText": "YOUR model\n(local / Azure / OpenAI)", "autoResize": true },
-
-    { "type": "arrow", "id": "a_grounded_model", "x": 760, "y": 565, "width": 0, "height": 75, "points": [[0,0],[0,75]], "endArrowhead": "arrow", "strokeColor": "#e8590c", "startBinding": { "elementId": "grounded", "fixedPoint": [0.5, 1] }, "endBinding": { "elementId": "model", "fixedPoint": [0.5, 0] }, "boundElements": [{ "id": "t_byom", "type": "text" }] },
-    { "type": "text", "id": "t_byom", "x": 765, "y": 590, "width": 110, "height": 20, "text": "you call it", "fontSize": 14, "fontFamily": 1, "strokeColor": "#757575", "textAlign": "center", "verticalAlign": "middle", "containerId": "a_grounded_model", "originalText": "you call it", "autoResize": true },
-
-    { "type": "rectangle", "id": "hybrid", "x": 60, "y": 455, "width": 200, "height": 110, "roundness": { "type": 3 }, "backgroundColor": "#d0bfff", "fillStyle": "solid", "strokeColor": "#6741d9", "strokeStyle": "dashed", "boundElements": [{ "id": "t_hybrid", "type": "text" }] },
-    { "type": "text", "id": "t_hybrid", "x": 70, "y": 478, "width": 180, "height": 64, "text": "OPT-IN: hybrid\nadd an embedder ->\nfuse BM25 + dense (RRF)\ncloses paraphrase gap", "fontSize": 14, "fontFamily": 1, "strokeColor": "#1e1e1e", "textAlign": "center", "verticalAlign": "middle", "containerId": "hybrid", "originalText": "OPT-IN: hybrid\nadd an embedder ->\nfuse BM25 + dense (RRF)\ncloses paraphrase gap", "autoResize": true },
-
-    { "type": "arrow", "id": "a_hybrid_score", "x": 260, "y": 460, "width": 110, "height": -85, "points": [[0,0],[110,-85]], "endArrowhead": "arrow", "strokeColor": "#6741d9", "strokeStyle": "dashed", "startBinding": { "elementId": "hybrid", "fixedPoint": [1, 0] }, "endBinding": { "elementId": "score", "fixedPoint": [0, 1] } },
-
-    { "type": "text", "id": "note", "x": 60, "y": 610, "text": "Default = pure BM25, zero deps.\nHybrid is optional and never\ncalls a generation model (BYOM).", "fontSize": 14, "fontFamily": 1, "strokeColor": "#757575", "originalText": "Default = pure BM25, zero deps.\nHybrid is optional and never\ncalls a generation model (BYOM).", "autoResize": true }
+    {
+      "type": "text",
+      "id": "title",
+      "x": 360,
+      "y": 30,
+      "text": "How groundedwork works",
+      "fontSize": 30,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "originalText": "How groundedwork works",
+      "autoResize": true
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "x": 330,
+      "y": 72,
+      "text": "Retrieval that knows when it doesn't know  -  BYOM, zero dependencies",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#757575",
+      "originalText": "Retrieval that knows when it doesn't know  -  BYOM, zero dependencies",
+      "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "docs",
+      "x": 60,
+      "y": 150,
+      "width": 180,
+      "height": 90,
+      "roundness": {
+        "type": 3
+      },
+      "backgroundColor": "#c3fae8",
+      "fillStyle": "solid",
+      "strokeColor": "#0c8599",
+      "boundElements": [
+        {
+          "id": "t_docs",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_docs",
+      "x": 70,
+      "y": 175,
+      "width": 160,
+      "height": 40,
+      "text": "Your documents\n(KB > context window)",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "docs",
+      "originalText": "Your documents\n(KB > context window)",
+      "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "index",
+      "x": 60,
+      "y": 300,
+      "width": 180,
+      "height": 90,
+      "roundness": {
+        "type": 3
+      },
+      "backgroundColor": "#a5d8ff",
+      "fillStyle": "solid",
+      "strokeColor": "#1971c2",
+      "boundElements": [
+        {
+          "id": "t_index",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_index",
+      "x": 70,
+      "y": 325,
+      "width": 160,
+      "height": 40,
+      "text": "BM25 index\n(in-memory, stdlib)",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "index",
+      "originalText": "BM25 index\n(in-memory, stdlib)",
+      "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a_docs_index",
+      "x": 150,
+      "y": 244,
+      "width": 0,
+      "height": 52,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          52
+        ]
+      ],
+      "endArrowhead": "arrow",
+      "strokeColor": "#1e1e1e",
+      "startBinding": {
+        "elementId": "docs",
+        "fixedPoint": [
+          0.5,
+          1
+        ]
+      },
+      "endBinding": {
+        "elementId": "index",
+        "fixedPoint": [
+          0.5,
+          0
+        ]
+      },
+      "boundElements": [
+        {
+          "id": "t_aindex",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_aindex",
+      "x": 158,
+      "y": 258,
+      "width": 90,
+      "height": 20,
+      "text": "add()",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#757575",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "a_docs_index",
+      "originalText": "add()",
+      "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "query",
+      "x": 360,
+      "y": 150,
+      "width": 180,
+      "height": 90,
+      "roundness": {
+        "type": 3
+      },
+      "backgroundColor": "#a5d8ff",
+      "fillStyle": "solid",
+      "strokeColor": "#1971c2",
+      "boundElements": [
+        {
+          "id": "t_query",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_query",
+      "x": 370,
+      "y": 175,
+      "width": 160,
+      "height": 40,
+      "text": "User question",
+      "fontSize": 18,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "query",
+      "originalText": "User question",
+      "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "score",
+      "x": 360,
+      "y": 300,
+      "width": 180,
+      "height": 90,
+      "roundness": {
+        "type": 3
+      },
+      "backgroundColor": "#d0bfff",
+      "fillStyle": "solid",
+      "strokeColor": "#6741d9",
+      "boundElements": [
+        {
+          "id": "t_score",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_score",
+      "x": 370,
+      "y": 320,
+      "width": 160,
+      "height": 50,
+      "text": "Score & rank\nvs the corpus",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "score",
+      "originalText": "Score & rank\nvs the corpus",
+      "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a_query_score",
+      "x": 450,
+      "y": 244,
+      "width": 0,
+      "height": 52,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          52
+        ]
+      ],
+      "endArrowhead": "arrow",
+      "strokeColor": "#1e1e1e",
+      "startBinding": {
+        "elementId": "query",
+        "fixedPoint": [
+          0.5,
+          1
+        ]
+      },
+      "endBinding": {
+        "elementId": "score",
+        "fixedPoint": [
+          0.5,
+          0
+        ]
+      }
+    },
+    {
+      "type": "arrow",
+      "id": "a_index_score",
+      "x": 244,
+      "y": 345,
+      "width": 112,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          112,
+          0
+        ]
+      ],
+      "endArrowhead": "arrow",
+      "strokeColor": "#1971c2",
+      "startBinding": {
+        "elementId": "index",
+        "fixedPoint": [
+          1,
+          0.5
+        ]
+      },
+      "endBinding": {
+        "elementId": "score",
+        "fixedPoint": [
+          0,
+          0.5
+        ]
+      }
+    },
+    {
+      "type": "diamond",
+      "id": "floor",
+      "x": 350,
+      "y": 450,
+      "width": 200,
+      "height": 120,
+      "backgroundColor": "#fff3bf",
+      "fillStyle": "solid",
+      "strokeColor": "#f08c00",
+      "boundElements": [
+        {
+          "id": "t_floor",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_floor",
+      "x": 365,
+      "y": 490,
+      "width": 170,
+      "height": 40,
+      "text": "Clears the\nrelevance floor?",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "floor",
+      "originalText": "Clears the\nrelevance floor?",
+      "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a_score_floor",
+      "x": 450,
+      "y": 394,
+      "width": 0,
+      "height": 52,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          52
+        ]
+      ],
+      "endArrowhead": "arrow",
+      "strokeColor": "#1e1e1e",
+      "startBinding": {
+        "elementId": "score",
+        "fixedPoint": [
+          0.5,
+          1
+        ]
+      },
+      "endBinding": {
+        "elementId": "floor",
+        "fixedPoint": [
+          0.5,
+          0
+        ]
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "grounded",
+      "x": 660,
+      "y": 455,
+      "width": 200,
+      "height": 110,
+      "roundness": {
+        "type": 3
+      },
+      "backgroundColor": "#b2f2bb",
+      "fillStyle": "solid",
+      "strokeColor": "#2f9e44",
+      "boundElements": [
+        {
+          "id": "t_grounded",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_grounded",
+      "x": 670,
+      "y": 480,
+      "width": 180,
+      "height": 60,
+      "text": "GROUNDED\nWorking set -> cache-aware\nprompt for your model",
+      "fontSize": 15,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "grounded",
+      "originalText": "GROUNDED\nWorking set -> cache-aware\nprompt for your model",
+      "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a_floor_grounded",
+      "x": 550,
+      "y": 510,
+      "width": 110,
+      "height": 0,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          110,
+          0
+        ]
+      ],
+      "endArrowhead": "arrow",
+      "strokeColor": "#2f9e44",
+      "startBinding": {
+        "elementId": "floor",
+        "fixedPoint": [
+          1,
+          0.5
+        ]
+      },
+      "endBinding": {
+        "elementId": "grounded",
+        "fixedPoint": [
+          0,
+          0.5
+        ]
+      },
+      "boundElements": [
+        {
+          "id": "t_yes",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_yes",
+      "x": 585,
+      "y": 488,
+      "width": 40,
+      "height": 20,
+      "text": "yes",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#2f9e44",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "a_floor_grounded",
+      "originalText": "yes",
+      "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "abstain",
+      "x": 350,
+      "y": 660,
+      "width": 200,
+      "height": 100,
+      "roundness": {
+        "type": 3
+      },
+      "backgroundColor": "#ffc9c9",
+      "fillStyle": "solid",
+      "strokeColor": "#e03131",
+      "boundElements": [
+        {
+          "id": "t_abstain",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_abstain",
+      "x": 360,
+      "y": 685,
+      "width": 180,
+      "height": 50,
+      "text": "ABSTAIN\ngrounded=false, no guess,\nno model call",
+      "fontSize": 15,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "abstain",
+      "originalText": "ABSTAIN\ngrounded=false, no guess,\nno model call",
+      "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a_floor_abstain",
+      "x": 450,
+      "y": 570,
+      "width": 0,
+      "height": 90,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          90
+        ]
+      ],
+      "endArrowhead": "arrow",
+      "strokeColor": "#e03131",
+      "startBinding": {
+        "elementId": "floor",
+        "fixedPoint": [
+          0.5,
+          1
+        ]
+      },
+      "endBinding": {
+        "elementId": "abstain",
+        "fixedPoint": [
+          0.5,
+          0
+        ]
+      },
+      "boundElements": [
+        {
+          "id": "t_no",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_no",
+      "x": 458,
+      "y": 605,
+      "width": 60,
+      "height": 20,
+      "text": "nothing",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#e03131",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "a_floor_abstain",
+      "originalText": "nothing",
+      "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "model",
+      "x": 660,
+      "y": 640,
+      "width": 200,
+      "height": 90,
+      "roundness": {
+        "type": 3
+      },
+      "backgroundColor": "#ffd8a8",
+      "fillStyle": "solid",
+      "strokeColor": "#e8590c",
+      "strokeStyle": "dashed",
+      "boundElements": [
+        {
+          "id": "t_model",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_model",
+      "x": 670,
+      "y": 665,
+      "width": 180,
+      "height": 40,
+      "text": "YOUR model\n(local / Azure / OpenAI)",
+      "fontSize": 15,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "model",
+      "originalText": "YOUR model\n(local / Azure / OpenAI)",
+      "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a_grounded_model",
+      "x": 760,
+      "y": 565,
+      "width": 0,
+      "height": 75,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          75
+        ]
+      ],
+      "endArrowhead": "arrow",
+      "strokeColor": "#e8590c",
+      "startBinding": {
+        "elementId": "grounded",
+        "fixedPoint": [
+          0.5,
+          1
+        ]
+      },
+      "endBinding": {
+        "elementId": "model",
+        "fixedPoint": [
+          0.5,
+          0
+        ]
+      },
+      "boundElements": [
+        {
+          "id": "t_byom",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_byom",
+      "x": 765,
+      "y": 590,
+      "width": 110,
+      "height": 20,
+      "text": "you call it",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#757575",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "a_grounded_model",
+      "originalText": "you call it",
+      "autoResize": true
+    },
+    {
+      "type": "rectangle",
+      "id": "hybrid",
+      "x": 60,
+      "y": 455,
+      "width": 200,
+      "height": 110,
+      "roundness": {
+        "type": 3
+      },
+      "backgroundColor": "#d0bfff",
+      "fillStyle": "solid",
+      "strokeColor": "#6741d9",
+      "strokeStyle": "dashed",
+      "boundElements": [
+        {
+          "id": "t_hybrid",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "t_hybrid",
+      "x": 70,
+      "y": 478,
+      "width": 180,
+      "height": 64,
+      "text": "OPT-IN: hybrid\nadd an embedder ->\nfuse BM25 + dense (RRF)\ncloses paraphrase gap",
+      "fontSize": 14,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "hybrid",
+      "originalText": "OPT-IN: hybrid\nadd an embedder ->\nfuse BM25 + dense (RRF)\ncloses paraphrase gap",
+      "autoResize": true
+    },
+    {
+      "type": "arrow",
+      "id": "a_hybrid_score",
+      "x": 260,
+      "y": 460,
+      "width": 110,
+      "height": -85,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          110,
+          -85
+        ]
+      ],
+      "endArrowhead": "arrow",
+      "strokeColor": "#6741d9",
+      "strokeStyle": "dashed",
+      "startBinding": {
+        "elementId": "hybrid",
+        "fixedPoint": [
+          1,
+          0
+        ]
+      },
+      "endBinding": {
+        "elementId": "score",
+        "fixedPoint": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "x": 60,
+      "y": 610,
+      "text": "Default = pure BM25, zero deps.\nHybrid is optional and never\ncalls a generation model (BYOM).",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#757575",
+      "originalText": "Default = pure BM25, zero deps.\nHybrid is optional and never\ncalls a generation model (BYOM).",
+      "autoResize": true
+    }
   ],
   "appState": {
     "viewBackgroundColor": "#ffffff"
