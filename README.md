@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/hero.png" alt="groundedwork — retrieval that knows when it doesn't know" width="100%">
+  <img src="docs/assets/social-card.png" alt="groundedwork — retrieval that knows when it doesn't know. 99.2% fewer tokens per query, 0 dependencies, abstains instead of hallucinating." width="100%">
 </p>
 
 <p align="center">
