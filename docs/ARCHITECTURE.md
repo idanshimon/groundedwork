@@ -13,7 +13,11 @@ It is a *retrieval and prompt-assembly* layer. It deliberately does **not** call
 ### The whole flow at a glance
 
 <p align="center">
-  <img src="visuals/how-it-works.png" alt="groundedwork flow: documents add() into a BM25 index; a user question is scored and ranked; the relevance floor decides — clears it → a grounded working set becomes a cache-aware prompt for your own model (BYOM), nothing clears it → abstain with no model call. An opt-in hybrid embedder fuses BM25 with dense similarity to close the paraphrase gap." width="92%">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="visuals/how-it-works-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="visuals/how-it-works-light.png">
+    <img src="visuals/how-it-works-light.png" alt="groundedwork flow: documents add() into a BM25 index; a user question is scored and ranked; the relevance floor decides — clears it → a grounded working set becomes a cache-aware prompt for your own model (BYOM), nothing clears it → abstain with no model call. An opt-in hybrid embedder fuses BM25 with dense similarity to close the paraphrase gap." width="92%">
+  </picture>
 </p>
 
 > Editable source: [`visuals/how-it-works.excalidraw`](visuals/how-it-works.excalidraw) — drag it onto [excalidraw.com](https://excalidraw.com) to view or remix.
