@@ -35,6 +35,10 @@
   nav { display: flex; gap: 20px; }
   nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; text-decoration: none; }
   nav a:hover { text-decoration: underline; }
+  nav .walkthrough-cta { gap: 9px; padding: 10px 14px; border: 1px solid var(--accent); border-radius: 7px; background: var(--accent); color: white; text-decoration: none; }
+  .walkthrough-cta svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .walkthrough-cta .duration { font: 11px var(--mono); padding-left: 9px; border-left: 1px solid #ffffff55; }
+  .walkthrough-cta:hover { background: var(--ink); }
   main { padding-top: 32px; padding-bottom: 36px; }
   .intro { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 26px; }
   .eyebrow { margin: 0 0 8px; font: 11px/1.5 var(--mono); text-transform: uppercase; letter-spacing: 1.6px; color: var(--muted); }
@@ -57,7 +61,10 @@
   .notice { margin: 16px 0; padding: 16px 20px; border: 1px solid #cfaa7e; border-radius: 8px; background: var(--warning-bg); color: var(--warning); }
   .notice p { margin: 0; }
   .retry { min-height: 44px; margin-top: 8px; border: 1px solid currentColor; padding: 8px 14px; border-radius: 6px; background: transparent; color: inherit; }
-  .status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .status { min-height: 44px; display: flex; align-items: center; margin: 0 0 16px; padding: 10px 14px; border-left: 3px solid var(--accent); background: #edf6ef; color: var(--ink); font-size: 14px; line-height: 1.5; }
+  #result { scroll-margin-top: 24px; }
+  #result:focus { outline: none; }
+  #run-receipt { margin-left: 8px; font: 12px var(--mono); color: var(--accent); white-space: nowrap; }
   .result-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
   .result-heading h2 { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.4px; margin: 0; color: var(--muted); }
   #result-query { font-size: 13px; margin: 0; color: var(--muted); overflow-wrap: anywhere; }
@@ -115,6 +122,10 @@
     .mark { width: 23px; height: 25px; font-size: 17px; }
     nav { gap: 14px; }
     nav a { font-size: 12px; }
+    nav { gap: 10px; }
+    nav .walkthrough-cta { padding: 8px 10px; gap: 6px; }
+    .walkthrough-cta .duration { padding-left: 6px; }
+    .status { font-size: 13px; }
     main { padding-top: 24px; }
     .intro { display: block; margin-bottom: 20px; }
     h1 { letter-spacing: -1px; }
@@ -139,6 +150,11 @@
     summary { padding: 12px 16px; }
     .raw-body { padding: 16px; }
   }
+  @media (max-width: 540px) {
+    .topbar { flex-wrap: wrap; padding: 12px 0; row-gap: 6px; }
+    .topbar nav { width: 100%; }
+    nav .walkthrough-cta { flex: 1; justify-content: center; }
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   }
@@ -150,7 +166,7 @@
     <div class="brand"><span class="mark" aria-hidden="true">g</span>groundedwork</div>
     <nav aria-label="Project">
       <a href="https://github.com/idanshimon/groundedwork">Source</a>
-      <a href="./walkthrough/">Walkthrough</a>
+      <a class="walkthrough-cta" href="./walkthrough/" aria-label="Walkthrough" title="Watch how retrieval works — 30-second interactive guide"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="m10 8 6 4-6 4Z" fill="currentColor"/></svg><span>Watch walkthrough</span><span class="duration">30s</span></a>
     </nav>
   </header>
   <main>
@@ -185,9 +201,9 @@
       <button class="retry" id="retry" type="button" hidden>Retry connection</button>
     </div>
     <p class="status" id="status" role="status" aria-live="polite">Starting the real engine...</p>
-    <section id="result" aria-label="Retrieval result" hidden>
+    <section id="result" tabindex="-1" aria-label="Retrieval result" hidden>
       <div class="result-heading">
-        <h2>Retrieval inspection</h2>
+        <h2>Retrieval inspection <span id="run-receipt"></span></h2>
         <p id="result-query"></p>
       </div>
       <div class="workspace">
@@ -261,8 +277,10 @@
   let adapter;
   let connected = false;
   let generation = 0;
+  let completedRuns = 0;
   function busy(value) {
     controls.forEach(control => { control.disabled = value; });
+    $('run').textContent = value ? 'Running…' : 'Run query';
     $('query-form').setAttribute('aria-busy', String(value));
   }
   function selectScenario(query) {
@@ -363,7 +381,7 @@
     $('metadata').textContent = JSON.stringify(data, null, 2);
     $('result').hidden = false;
   }
-  async function run() {
+  async function run({ userInitiated = false } = {}) {
     const query = $('query').value.trim();
     if (!query || !adapter || !connected) return;
     const current = ++generation;
@@ -376,7 +394,18 @@
       const data = validate(await bounded(() => adapter.analyze(query), 'Engine query timed out. Try again.'));
       if (current !== generation) return;
       render(data);
-      $('status').textContent = 'Retrieval complete. No model called.';
+      completedRuns += 1;
+      $('run-receipt').textContent = `Run ${completedRuns}`;
+      $('status').textContent = userInitiated
+        ? `Run ${completedRuns} complete · ${data.hits.length ? `${data.hits.length} document${data.hits.length === 1 ? '' : 's'} selected` : 'No documents selected'}. No model called.`
+        : 'Example ready. Edit the question or try a case, then inspect the results below.';
+      if (userInitiated) {
+        const bounds = $('result').getBoundingClientRect();
+        $('result').focus({ preventScroll: true });
+        if (bounds.top > innerHeight * 0.65 || bounds.top < 0) {
+          $('result').scrollIntoView({ block: 'start', behavior: 'instant' });
+        }
+      }
     } catch (error) {
       if (current === generation) showError(error);
     } finally {
@@ -410,13 +439,13 @@
   };
   $('query-form').addEventListener('submit', event => {
     event.preventDefault();
-    if (!$('run').disabled) run();
+    if (!$('run').disabled) run({ userInitiated: true });
   });
   $('query').addEventListener('input', () => selectScenario($('query').value.trim()));
   document.querySelectorAll('[data-scenario]').forEach(button => {
     button.addEventListener('click', () => {
       $('query').value = scenarios[Number(button.dataset.scenario)].query;
-      run();
+      run({ userInitiated: true });
     });
   });
   $('retry').addEventListener('click', () => location.reload());

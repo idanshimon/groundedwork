@@ -207,6 +207,36 @@ class PlaygroundTests(unittest.TestCase):
         self.assertEqual(json.loads(page.locator("#metadata").inner_text())["answer"]["answer"], hostile)
         self.assertFalse(page.evaluate("document.documentElement.scrollWidth > innerWidth"))
 
+    def test_user_runs_have_visible_receipts_and_reveal_results(self):
+        for width in (1280, 390):
+            page = self.page(width)
+            self.ready(page, self.urls[0])
+            first = page.locator("#status").inner_text()
+            page.get_by_role("button", name="Run query", exact=True).click()
+            page.wait_for_function("() => document.querySelector('#status').textContent.includes('Run 2 complete')")
+            self.assertNotEqual(page.locator("#status").inner_text(), first)
+            self.assertGreater(page.locator("#status").bounding_box()["height"], 20)
+            self.assertIn("Run 2", page.locator("#run-receipt").text_content())
+            self.assertEqual(page.evaluate("document.activeElement.id"), "result")
+            if width == 390:
+                self.assertLess(page.locator("#result").bounding_box()["y"], 150)
+            page.get_by_role("textbox", name="Your question").fill("What is the capital of France?")
+            page.get_by_role("textbox", name="Your question").press("Enter")
+            page.wait_for_function("() => document.querySelector('#status').textContent.includes('Run 3 complete')")
+            self.assertIn("No documents selected", page.locator("#status").inner_text())
+            self.assertEqual(page.locator("#decision").inner_text(), "No working set")
+            page.close()
+
+    def test_walkthrough_is_a_prominent_invitation(self):
+        page = self.page(390)
+        self.ready(page, self.urls[0])
+        link = page.get_by_role("link", name="Walkthrough", exact=True)
+        self.assertIn("Watch", link.inner_text())
+        self.assertIn("30", link.inner_text())
+        self.assertGreaterEqual(link.bounding_box()["height"], 44)
+        self.assertNotEqual(link.evaluate("el => getComputedStyle(el).backgroundColor"), "rgba(0, 0, 0, 0)")
+        self.assertEqual(link.locator("svg").count(), 1)
+
     def test_bootstrap_and_query_failures_are_visible_and_recoverable(self):
         page = self.page()
         page.route("**/api/version", lambda route: route.fulfill(status=503, body="unavailable"))
