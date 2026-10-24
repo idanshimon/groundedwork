@@ -12,6 +12,8 @@ groundedwork is a dependency-free retrieval + prompt-assembly layer. It indexes 
 
 The roadmap lives in OpenSpec, not in scattered TODOs. Run `openspec list` to see active changes (the planning queue) and `openspec list --specs` for the canonical capabilities (shipped behavior). Read `openspec/changes/<name>/` or `openspec/changes/archive/<name>/` for the full proposal/design/tasks/spec. Shipped: `hybrid-retrieval` (v0.2, closes the paraphrase gap, opt-in). Queue: `add-signature-compaction` (code-corpus support, a clean reimplementation of a ContextForge idea), `add-mcp-server` (groundedwork as an MCP tool for agent hosts), `add-disk-persistence`.
 
+The shipped playground contract is `openspec/specs/playground-experience/spec.md`; its retrospective archive records visible run feedback, safe adapters and test evidence. The companion walkthrough is governed by `openspec/specs/walkthrough-experience/spec.md` in `idanshimon/groundedwork-demo`, not by a duplicate engine spec here.
+
 Any change touching retrieval behavior, a public API, or an invariant goes through OpenSpec first: `openspec new change <name>`, author the four files, `openspec validate <name> --strict`. The config at `openspec/config.yaml` encodes the project invariants the proposal/design must respect. Pure bug fixes / docs / test additions do not require a change proposal.
 
 ---

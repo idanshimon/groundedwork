@@ -1,7 +1,7 @@
 # core-retrieval Specification
 
 ## Purpose
-BM25 keyword indexing and relevance-floored retrieval, implemented stdlib-only in `python/groundedwork/__init__.py` and `ts/src/index.ts` (k1=1.5, b=0.75, title weighted 2×). The relevance floor (default min_score=0.5) is the load-bearing safety primitive: weak matches are dropped rather than returned, so an off-topic query yields an empty working set instead of distractors. Ranking is validated against the reference rank_bm25 library.
+BM25 keyword indexing and relevance-floored retrieval, implemented stdlib-only in `python/groundedwork/__init__.py` and `ts/src/index.ts` (k1=1.5, b=0.75, title weighted 2×). The relevance floor (default min_score=0.5) drops candidates below the lexical score threshold and returns an empty working set if none clear it. Incidental overlap can still admit an irrelevant source; the floor is not a semantic correctness guarantee. Ranking is validated against the reference rank_bm25 library.
 ## Requirements
 ### Requirement: BM25 keyword indexing with title weighting
 The index MUST score documents using BM25 with parameters k1=1.5 and b=0.75, weighting the document title twice relative to the body.
