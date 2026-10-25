@@ -118,6 +118,11 @@ make golden     # regenerate golden.json after an intentional change
 
 `make test` exiting 0 is the definition of "green." CI runs the same on Python 3.9/3.11/3.13 and Node 18/20/22.
 
+`npm test` uses the `tsx` development-only loader with Node's built-in test runner.
+Do not restore `--experimental-strip-types`: Node 18/20 do not support that flag.
+Keep the `test/*.test.ts` discovery pattern so every suite runs; the library's
+published JavaScript still has no runtime dependencies.
+
 ---
 
 ## Non-negotiables (project values, learned empirically)

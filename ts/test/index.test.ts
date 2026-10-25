@@ -3,7 +3,8 @@
  *
  * fixtures/nimbus.json is the SAME file the Python suite consumes. If both
  * pass, the implementations are behaviorally identical. Uses Node's built-in
- * test runner (node --test), zero external deps.
+ * test runner via the tsx development loader on Node 18/20/22. The library
+ * itself remains zero-runtime-dependency.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
