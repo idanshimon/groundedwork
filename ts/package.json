@@ -14,15 +14,16 @@
   "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "test": "node --test --experimental-strip-types 'test/*.test.ts'",
+    "test": "tsx --test test/*.test.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": ["rag", "retrieval", "bm25", "llm", "context", "grounding", "abstention", "working-set"],
   "author": "Idan Shimon",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.4.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.4.0"
   },
   "engines": {
     "node": ">=18"

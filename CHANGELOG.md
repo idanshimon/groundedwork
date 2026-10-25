@@ -4,6 +4,9 @@ All notable changes to groundedwork are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Fixed
+- Run the complete TypeScript suite on Node 18/20/22 through a development-only TypeScript loader instead of the Node-22-only `--experimental-strip-types` flag. The supported Node floor, runtime dependencies and retrieval implementation are unchanged.
+
 ### Planned
 - On-disk persistence for the index.
 - `compact()` — signature compaction for code corpora (a clean reimplementation of a ContextForge idea).
